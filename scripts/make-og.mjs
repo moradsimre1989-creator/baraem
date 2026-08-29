@@ -46,7 +46,8 @@ await sharp(SRC)
   // JPEG أساسي لا متوالٍ: زاحف واتساب يفشل في قراءة الصور المتوالية
   // (progressive) فلا يعرض معاينة إطلاقاً، بينما المتصفّح يعرضها عادياً.
   // والحجم تحت 200 KB لأن واتساب يتجاهل الصور الثقيلة.
-  .jpeg({ quality: 78, progressive: false, mozjpeg: true })
+  // ملاحظة: لا نستعمل mozjpeg — فهو يفرض progressive ويتجاوز الخيار أدناه
+  .jpeg({ quality: 66, progressive: false })
   .toFile(OUT);
 
 const { size } = await stat(OUT);
