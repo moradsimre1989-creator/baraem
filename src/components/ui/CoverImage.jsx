@@ -27,7 +27,8 @@ export default function CoverImage({
 }) {
   const overlays = {
     // تدرّج من الأسفل: أغمق تحت النص، شفاف فوق الصورة
-    strong: "linear-gradient(to top, rgb(15 30 20 / 82%) 0%, rgb(15 30 20 / 45%) 45%, rgb(15 30 20 / 12%) 100%)",
+    strong:
+      "linear-gradient(to top, rgb(15 30 20 / 90%) 0%, rgb(15 30 20 / 58%) 45%, rgb(15 30 20 / 18%) 100%)",
     soft: "linear-gradient(to top, rgb(15 30 20 / 62%) 0%, rgb(15 30 20 / 22%) 60%, transparent 100%)",
   };
 

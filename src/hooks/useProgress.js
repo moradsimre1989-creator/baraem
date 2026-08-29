@@ -1,5 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 
+// صور حقيقية للشارات — الرمز التعبيري وحده يبدو لعبة، والصورة تجعل الإنجاز
+// ملموساً ومرتبطاً بمضمون المحطة التي نالها الطالب.
+import seedlingPhoto from "../assets/photos/seedling.webp";
+import oliveBranchesPhoto from "../assets/photos/olive-branches-sunset.webp";
+import oliveRootsPhoto from "../assets/photos/olive-roots.webp";
+import oliveCountFourPhoto from "../assets/photos/olive-count-four.webp";
+import whiteDovePhoto from "../assets/photos/white-dove.webp";
+import olivesCloseupPhoto from "../assets/photos/olives-closeup.webp";
+import birdOnBranchPhoto from "../assets/photos/bird-on-branch.webp";
+import treeShadePhoto from "../assets/photos/tree-shade.webp";
+import oliveTreeFullPhoto from "../assets/photos/olive-tree-full.webp";
+
 const STORAGE_KEY = "zaytouna-progress-v1";
 
 function loadState() {
@@ -68,6 +80,7 @@ export function useProgress() {
         {
           emoji: "🌱",
           label: "مستكشف الزيتونة",
+          photo: seedlingPhoto,
           earned: anyComplete,
           hint: "أكمل أي فعالية واحدة في الوحدة.",
           domainId: null,
@@ -75,6 +88,7 @@ export function useProgress() {
         {
           emoji: "📖",
           label: "بطل اللغة",
+          photo: oliveBranchesPhoto,
           earned: isDomainComplete("arabic"),
           hint: "أكمل كل فعاليات محطة اللغة العربية.",
           domainId: "arabic",
@@ -82,6 +96,7 @@ export function useProgress() {
         {
           emoji: "🔬",
           label: "العالم الصغير",
+          photo: oliveRootsPhoto,
           earned: isDomainComplete("science"),
           hint: "أكمل كل فعاليات محطة العلوم.",
           domainId: "science",
@@ -89,6 +104,7 @@ export function useProgress() {
         {
           emoji: "🔢",
           label: "عبقري الحساب",
+          photo: oliveCountFourPhoto,
           earned: isDomainComplete("math"),
           hint: "أكمل كل فعاليات محطة الرياضيات.",
           domainId: "math",
@@ -96,6 +112,7 @@ export function useProgress() {
         {
           emoji: "🕊️",
           label: "سفير السلام",
+          photo: whiteDovePhoto,
           earned: isDomainComplete("religion"),
           hint: "أكمل كل فعاليات محطة الدين.",
           domainId: "religion",
@@ -103,6 +120,7 @@ export function useProgress() {
         {
           emoji: "🎨",
           label: "الفنان",
+          photo: olivesCloseupPhoto,
           earned: isDomainComplete("arts"),
           hint: "أكمل كل فعاليات محطة الفنون.",
           domainId: "arts",
@@ -110,6 +128,7 @@ export function useProgress() {
         {
           emoji: "🎵",
           label: "الموسيقي",
+          photo: birdOnBranchPhoto,
           earned: isDomainComplete("music"),
           hint: "أكمل كل فعاليات محطة الموسيقى.",
           domainId: "music",
@@ -117,6 +136,7 @@ export function useProgress() {
         {
           emoji: "🧠",
           label: "المفكر الصغير",
+          photo: treeShadePhoto,
           earned: thinkingCount >= 3,
           hint: `أكمل 3 فعاليات من نوع «تفكير واستنتاج» (حالياً: ${thinkingCount}/3).`,
           domainId: null,
@@ -124,6 +144,7 @@ export function useProgress() {
         {
           emoji: "🏆",
           label: "خبير الزيتونة",
+          photo: oliveTreeFullPhoto,
           earned: allComplete,
           hint: "أكمل كل فعاليات كل المحطات في الوحدة بأكملها.",
           domainId: null,

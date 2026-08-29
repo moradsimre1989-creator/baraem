@@ -1,5 +1,9 @@
 import { useState } from "react";
 import BigButton from "./ui/BigButton.jsx";
+import PathStationCard from "./ui/PathStationCard.jsx";
+import { altFor } from "../data/photoCredits.js";
+import { zaytounaPath, stationActivities } from "../data/units/zaytounaPath.js";
+import { useGrade } from "../context/GradeContext.jsx";
 import oliveBranchesPhoto from "../assets/photos/olive-branches-sunset.webp";
 
 function OliveTreeHero() {
@@ -38,8 +42,25 @@ function BranchCard({ domain, progress, index, onClick }) {
       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "var(--shadow-hover)")}
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "var(--shadow-card)")}
     >
-      <div className="w-14 h-14 rounded-2xl bg-white/70 flex items-center justify-center text-3xl mx-auto mb-3">
-        {domain.icon}
+      {/* صورة المحطة الحقيقية، والأيقونة شارة صغيرة فوقها بدل أن تحلّ محلّها */}
+      <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-3">
+        {domain.photo ? (
+          <img
+            src={domain.photo}
+            alt={altFor(domain.photo, domain.title)}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-white/70" />
+        )}
+        <span
+          className="absolute bottom-2 right-2 w-10 h-10 rounded-xl bg-white/90 flex items-center justify-center text-2xl"
+          aria-hidden
+        >
+          {domain.icon}
+        </span>
       </div>
       <div className="font-bold text-base text-olive-ink">{domain.title}</div>
       {domain.comingSoon ? (
@@ -71,7 +92,22 @@ function BadgePopup({ badge, onClose, onGoToDomain }) {
         style={{ boxShadow: "var(--shadow-hover)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-5xl">{badge.emoji}</div>
+        <div className="relative mx-auto w-full aspect-[4/3] rounded-2xl overflow-hidden">
+          {badge.photo && (
+            <img
+              src={badge.photo}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className={`absolute inset-0 h-full w-full object-cover ${
+                badge.earned ? "" : "grayscale opacity-70"
+              }`}
+            />
+          )}
+          <span className="absolute bottom-2 right-2 text-4xl drop-shadow-lg" aria-hidden>
+            {badge.emoji}
+          </span>
+        </div>
         <p className="text-xl font-black">{badge.label}</p>
         {badge.earned ? (
           <p className="text-green-700 font-bold">🎉 أحسنت! حصلت على هذه الشارة</p>
@@ -141,18 +177,34 @@ function BadgeShelf({ badges, onOpenDomainById }) {
             key={b.label}
             title={b.label}
             onClick={() => setActiveBadge(b)}
-            className={`flex flex-col items-center gap-1 w-16 transition-all duration-300 hover:-translate-y-0.5 ${
+            className={`flex flex-col items-center gap-1 w-[4.5rem] transition-all duration-300 hover:-translate-y-0.5 ${
               b.earned ? "opacity-100" : "opacity-40 hover:opacity-70"
             }`}
           >
             <div
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl ${
-                b.earned ? "bg-olive-gold/15" : "bg-black/5"
+              className={`relative w-14 h-14 rounded-2xl overflow-hidden ${
+                b.earned ? "ring-2 ring-olive-gold" : "bg-black/5"
               }`}
             >
-              {b.emoji}
+              {b.photo && (
+                <img
+                  src={b.photo}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className={`absolute inset-0 h-full w-full object-cover ${
+                    b.earned ? "" : "grayscale"
+                  }`}
+                />
+              )}
+              <span
+                className="absolute inset-x-0 bottom-0 bg-black/45 text-center text-base leading-6"
+                aria-hidden
+              >
+                {b.emoji}
+              </span>
             </div>
-            <span className="text-[10px] text-center text-olive-trunk leading-tight">{b.label}</span>
+            <span className="text-[11px] text-center text-olive-trunk leading-tight">{b.label}</span>
           </button>
         ))}
       </div>
@@ -171,8 +223,23 @@ function BadgeShelf({ badges, onOpenDomainById }) {
   );
 }
 
-export default function TreeMap({ unit, getDomainProgress, badges, onOpenDomain }) {
+export default function TreeMap({
+  unit,
+  rawUnit,
+  getDomainProgress,
+  isActivityComplete,
+  badges,
+  onOpenDomain,
+  onOpenPathStation,
+}) {
   const firstDomain = unit.domains[0];
+  // المسار الموضوعي والمواد صارا وجهين لشاشة واحدة بدل بندين منفصلين في القائمة.
+  // «المسار» أولاً لأنه ترتيب الرحلة كما يعيشها الطالب؛ «المواد» للمعلّمة حين
+  // تريد الوصول إلى مادة بعينها.
+  const [view, setView] = useState("path");
+  const { grade } = useGrade();
+  const pathUnit = rawUnit ?? unit;
+
 
   const overall = unit.domains.reduce(
     (acc, d) => {
@@ -235,17 +302,70 @@ export default function TreeMap({ unit, getDomainProgress, badges, onOpenDomain 
         />
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-        {unit.domains.map((domain, i) => (
-          <BranchCard
-            key={domain.id}
-            domain={domain}
-            index={i}
-            progress={getDomainProgress(domain)}
-            onClick={() => onOpenDomain(domain)}
-          />
-        ))}
+      {/* مبدّل العرض — المحتوى نفسه بترتيبين */}
+      <div className="flex justify-center mb-6">
+        <div className="inline-flex rounded-2xl bg-surface-alt p-1.5 border border-border">
+          {[
+            { id: "path", icon: "🛤️", label: "المسار", hint: `${zaytounaPath.stations.length} محطة` },
+            { id: "subjects", icon: "📚", label: "المواد", hint: `${unit.domains.length} مادة` },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setView(t.id)}
+              aria-pressed={view === t.id}
+              className={`flex items-center gap-2 rounded-xl px-5 py-3 font-bold transition-all duration-200 ${
+                view === t.id
+                  ? "bg-white text-olive-ink shadow-[0_2px_8px_-2px_rgb(16_24_40/12%)]"
+                  : "text-olive-trunk hover:text-olive-ink"
+              }`}
+            >
+              <span aria-hidden>{t.icon}</span>
+              <span>{t.label}</span>
+              <span className="text-sm font-normal opacity-70">{t.hint}</span>
+            </button>
+          ))}
+        </div>
       </div>
+
+      {view === "path" ? (
+        <>
+          <p className="text-center text-olive-trunk mb-6 max-w-xl mx-auto">
+            {zaytounaPath.subtitle}
+          </p>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {zaytounaPath.stations.map((station, i) => {
+              const items = stationActivities(pathUnit, station, grade);
+              const done = items.filter((x) => isActivityComplete(x.activity.id)).length;
+              return (
+                <PathStationCard
+                  key={station.id}
+                  cover={station.cover}
+                  icon={station.icon}
+                  title={station.title}
+                  description={station.description}
+                  index={i}
+                  done={done}
+                  total={items.length}
+                  badge={station.badge}
+                  onClick={() => onOpenPathStation?.(station)}
+                />
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+          {unit.domains.map((domain, i) => (
+            <BranchCard
+              key={domain.id}
+              domain={domain}
+              index={i}
+              progress={getDomainProgress(domain)}
+              onClick={() => onOpenDomain(domain)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

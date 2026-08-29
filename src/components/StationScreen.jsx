@@ -1,18 +1,38 @@
 import BigButton from "./ui/BigButton.jsx";
+import CoverImage from "./ui/CoverImage.jsx";
+import ListenButton from "./ui/ListenButton.jsx";
 
 export default function StationScreen({ domain, isActivityComplete, onOpenActivity, onOpenSummary }) {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-16 pt-6">
-      <div className="text-center mb-8">
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3"
-          style={{ background: `${domain.color}17` }}
-        >
-          {domain.icon}
+      {/* صورة المحطة الحقيقية بدل مربّع لوني بأيقونة */}
+      {domain.photo ? (
+        <CoverImage src={domain.photo} ratio="banner" className="mb-6">
+          <div className="flex items-center gap-3">
+            <span className="text-4xl" aria-hidden>
+              {domain.icon}
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight">
+              {domain.title}
+            </h1>
+          </div>
+        </CoverImage>
+      ) : (
+        <div className="text-center mb-8">
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3"
+            style={{ background: `${domain.color}17` }}
+          >
+            {domain.icon}
+          </div>
+          <h1 className="text-3xl font-black" style={{ color: domain.color }}>
+            {domain.title}
+          </h1>
         </div>
-        <h1 className="text-3xl font-black" style={{ color: domain.color }}>
-          {domain.title}
-        </h1>
+      )}
+
+      <div className="mb-6 flex justify-center">
+        <ListenButton text={domain.title} label="اقرأ اسم المحطة" size="sm" />
       </div>
 
       <div className="bg-surface rounded-3xl border border-black/5 p-5 mb-6" style={{ boxShadow: "var(--shadow-card)" }}>

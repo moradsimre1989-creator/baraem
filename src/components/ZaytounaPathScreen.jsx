@@ -1,6 +1,6 @@
 import { zaytounaPath, stationActivities } from "../data/units/zaytounaPath.js";
 import { useGrade } from "../context/GradeContext.jsx";
-import CoverImage from "./ui/CoverImage.jsx";
+import PathStationCard from "./ui/PathStationCard.jsx";
 import ListenButton from "./ui/ListenButton.jsx";
 
 /*
@@ -10,60 +10,21 @@ import ListenButton from "./ui/ListenButton.jsx";
   شجرة المواد تبقى كما هي وتعمل كما كانت — هذه الشاشة إضافة فوقها.
 */
 
-function StationCard({ unit, station, index, grade, isActivityComplete, onOpen }) {
+function PathStationCardFor({ unit, station, index, grade, isActivityComplete, onOpen }) {
   const items = stationActivities(unit, station, grade);
-  const total = items.length;
   const done = items.filter((i) => isActivityComplete(i.activity.id)).length;
-  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
-  const complete = total > 0 && done === total;
-
   return (
-    <button
+    <PathStationCard
+      cover={station.cover}
+      icon={station.icon}
+      title={station.title}
+      description={station.description}
+      index={index}
+      done={done}
+      total={items.length}
+      badge={station.badge}
       onClick={() => onOpen(station)}
-      className="group w-full text-right transition-all duration-300 hover:-translate-y-1"
-      aria-label={`المحطة ${index + 1}: ${station.title} — ${done} من ${total} مكتمل`}
-    >
-      <CoverImage
-        src={station.cover}
-        ratio="card"
-        className="border-2 border-transparent group-hover:border-olive-green group-focus-visible:border-olive-green"
-      >
-        <div className="flex items-start justify-between gap-2 mb-auto">
-          <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-black text-olive-ink">
-            {index + 1}
-          </span>
-          {complete && (
-            <span className="rounded-full bg-olive-green px-3 py-1 text-sm font-bold text-white">
-              {station.badge.emoji} {station.badge.label}
-            </span>
-          )}
-        </div>
-
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-2xl" aria-hidden>
-              {station.icon}
-            </span>
-            <h3 className="text-xl font-black text-white leading-tight">{station.title}</h3>
-          </div>
-          <p className="text-white/85 text-sm leading-snug mb-3 line-clamp-2">
-            {station.description}
-          </p>
-
-          <div className="flex items-center gap-2">
-            <div className="h-2.5 flex-1 rounded-full bg-white/25 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-olive-gold transition-all duration-500"
-                style={{ width: `${percent}%` }}
-              />
-            </div>
-            <span className="text-sm font-bold text-white shrink-0">
-              {done}/{total}
-            </span>
-          </div>
-        </div>
-      </CoverImage>
-    </button>
+    />
   );
 }
 
@@ -113,7 +74,7 @@ export default function ZaytounaPathScreen({ unit, isActivityComplete, onOpenSta
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {zaytounaPath.stations.map((station, i) => (
-          <StationCard
+          <PathStationCardFor
             key={station.id}
             unit={unit}
             station={station}

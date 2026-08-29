@@ -51,6 +51,7 @@ export const unit = {
       title: "اللغة العربية",
       icon: "📖",
       color: "#2FA36B",
+      photo: oliveBranchesPhoto,
       objectives: [
         "قراءة أبيات القصيدة قراءة واضحة",
         "الاستماع إلى القصيدة وفهم معناها العام",
@@ -959,6 +960,7 @@ export const unit = {
       title: "اللغة العبرية والإنجليزية",
       icon: "🔤",
       color: "#4C9FE8",
+      photo: oliveLeavesPhoto,
       objectives: [
         "بطاقات ثلاثية اللغة لأقسام الشجرة",
         "لعبة توصيل بين الكلمة العربية ومقابلها",
@@ -1081,6 +1083,7 @@ export const unit = {
       title: "الرياضيات",
       icon: "🔢",
       color: "#E3A93B",
+      photo: oliveCountFourPhoto,
       objectives: [
         "العدّ، وقراءة الأعداد ومقارنتها وترتيبها",
         "الجمع والطرح من خلال مواقف بستان الزيتون",
@@ -1440,6 +1443,7 @@ export const unit = {
       title: "موطن",
       icon: "🗺️",
       color: "#3B82C4",
+      photo: oliveGroveRegionPhoto,
       objectives: [
         "الجهات الأربع وقراءة الخارطة",
         "بلاد زراعة الزيتون: بلاد الشام وأفريقيا",
@@ -1696,6 +1700,7 @@ export const unit = {
       title: "دين",
       icon: "🕌",
       color: "#8B7CF0",
+      photo: whiteDovePhoto,
       objectives: [
         "غصن الزيتون رمزاً للسلام",
         "الشجرة المباركة في الكتب السماوية",
@@ -1823,6 +1828,7 @@ export const unit = {
       title: "التعلّم الاجتماعي والعاطفي",
       icon: "💚",
       color: "#E8829B",
+      photo: treeShadePhoto,
       objectives: [
         "التعاون والألفة بين أفراد العائلة في موسم الزيتون",
         "بطاقات مشاعر",
@@ -1930,6 +1936,7 @@ export const unit = {
       title: "اقتصاد",
       icon: "💰",
       color: "#C9974A",
+      photo: oliveOilBottlePhoto,
       objectives: [
         "محصول الزيتون ومنتجاته مصدر رزق",
         "مادة خام ↔ منتَج",
@@ -2052,6 +2059,7 @@ export const unit = {
       title: "علوم",
       icon: "🔬",
       color: "#34B7A7",
+      photo: oliveRootsPhoto,
       objectives: [
         "الحواس الخمس كمصدر أول للمعلومات",
         "أقسام الشجرة ووظيفة كل قسم، ورحلة الماء داخلها",
@@ -2457,6 +2465,7 @@ export const unit = {
       title: "موسيقى",
       icon: "🎵",
       color: "#A16BC9",
+      photo: oliveBlossomPhoto,
       objectives: [
         "فيديو زيتونة الأغصان",
         "أغانٍ فلكلورية عن موسم الزيتون",
@@ -2556,6 +2565,7 @@ export const unit = {
       title: "فنون",
       icon: "🎨",
       color: "#F0925A",
+      photo: olivesCloseupPhoto,
       objectives: ["رسم شجرة زيتون وتظليلها على لوح رسم رقمي", "لوحة ألوان الزيتونة"],
       activities: [
         {
@@ -2643,6 +2653,7 @@ export const unit = {
       title: "رياضة",
       icon: "🤸",
       color: "#3FB88A",
+      photo: oliveOrchardWidePhoto,
       objectives: ["مهام «خارج الشاشة» في الساحة", "الحركة والتوازن مستوحاة من نمو الشجرة"],
       activities: [
         {

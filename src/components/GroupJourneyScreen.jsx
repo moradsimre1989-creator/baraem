@@ -1,4 +1,5 @@
 import BigButton from "./ui/BigButton.jsx";
+import CoverImage from "./ui/CoverImage.jsx";
 
 const PASTEL_BG = {
   "pastel-blue": "bg-pastel-blue",
@@ -61,13 +62,30 @@ export default function GroupJourneyScreen({ domain, subtitle, isActivityComplet
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-16 pt-6">
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-pastel-blue flex items-center justify-center text-3xl mx-auto mb-3">
-          {domain.icon}
+      {/* صورة المحطة الحقيقية بدل مربّع لوني بأيقونة */}
+      {domain.photo ? (
+        <CoverImage src={domain.photo} ratio="banner" className="mb-8">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-4xl" aria-hidden>
+                {domain.icon}
+              </span>
+              <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight">
+                {domain.title}
+              </h1>
+            </div>
+            {subtitle && <p className="text-white/90 leading-relaxed">{subtitle}</p>}
+          </div>
+        </CoverImage>
+      ) : (
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-pastel-blue flex items-center justify-center text-3xl mx-auto mb-3">
+            {domain.icon}
+          </div>
+          <h1 className="text-3xl font-black text-olive-ink">{domain.title}</h1>
+          {subtitle && <p className="text-olive-trunk mt-2 max-w-lg mx-auto">{subtitle}</p>}
         </div>
-        <h1 className="text-3xl font-black text-olive-ink">{domain.title}</h1>
-        {subtitle && <p className="text-olive-trunk mt-2 max-w-lg mx-auto">{subtitle}</p>}
-      </div>
+      )}
 
       {allComplete && (
         <div className="rounded-[24px] bg-pastel-yellow p-6 text-center mb-8" style={{ boxShadow: "var(--shadow-card)" }}>
