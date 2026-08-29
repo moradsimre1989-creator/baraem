@@ -43,8 +43,10 @@ await sharp(SRC)
   // والصورة الباهتة تضيع فيها تفاصيل الشجرة.
   .modulate({ brightness: 1.10, saturation: 1.15 })
   .composite([{ input: overlay, blend: "over" }])
-  // واتساب يتجاهل صور المعاينة الثقيلة، فنبقى تحت 200 KB
-  .jpeg({ quality: 72, progressive: true, mozjpeg: true })
+  // JPEG أساسي لا متوالٍ: زاحف واتساب يفشل في قراءة الصور المتوالية
+  // (progressive) فلا يعرض معاينة إطلاقاً، بينما المتصفّح يعرضها عادياً.
+  // والحجم تحت 200 KB لأن واتساب يتجاهل الصور الثقيلة.
+  .jpeg({ quality: 78, progressive: false, mozjpeg: true })
   .toFile(OUT);
 
 const { size } = await stat(OUT);
