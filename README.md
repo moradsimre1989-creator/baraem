@@ -144,6 +144,13 @@ scripts/to-webp.mjs          ← تحويل صور الوحدة إلى WebP (ي�
 
 ## الموقع والنشر
 
+الموقع الرئيسي (Cloudflare Pages): **https://baraem.pages.dev**
+يبني وينشر تلقائياً عند كل دفعة إلى `main` — لا أمر ولا خطوة يدوية.
+إعداداته: أمر البناء `npm run build`، مجلد الناتج `dist`، بلا أي متغيّر بيئة
+(الموقع في جذر النطاق، والإعداد الافتراضي `base: /` يناسبه).
+
+### نسخة GitHub Pages (ثانوية)
+
 الموقع الحيّ: **https://moradsimre1989-creator.github.io/baraem/**
 المستودع: **https://github.com/moradsimre1989-creator/baraem**
 
