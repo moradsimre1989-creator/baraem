@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "deploy": "node scripts/deploy.mjs",
     "webp": "node scripts/to-webp.mjs",
-    "og": "node scripts/make-og.mjs"
+    "og": "node scripts/make-og.mjs",
+    "deploy:cf": "node scripts/deploy-cf.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -29,6 +30,7 @@
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^8.2.0"
+    "vite": "^8.2.0",
+    "wrangler": "^4.127.1"
   }
 }

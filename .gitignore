@@ -25,3 +25,7 @@ dist-ssr
 
 # نسخة عمل فرع النشر (مؤقتة)
 .gh-pages
+
+# توكن Cloudflare — لا يُودَع أبداً
+.cf-token
+*.token
