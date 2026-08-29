@@ -8,8 +8,8 @@
 
   لماذا فرع منفصل لا GitHub Actions: التوكن الحالي لا يملك صلاحية `workflow`،
   فلا يستطيع رفع ملف داخل ‎.github/workflows‎. ملف الـ Actions جاهز في المستودع
-  تحت `.github/workflows/deploy.yml` — امنحي الصلاحية مرة واحدة بـ
-  `gh auth refresh -s workflow` ثم ادفعيه، وعندها يصير البناء والنشر تلقائيين
+  تحت `.github/pages-deploy.workflow.yml` — امنح الصلاحية مرة واحدة بـ
+  `gh auth refresh -s workflow` ثم انقله وادفعه، وعندها يصير البناء والنشر تلقائيين
   عند كل دفعة ولن تحتاجي هذا السكربت.
 
   الفرع `gh-pages` يحوي **ناتج البناء فقط**، لا الكود. الكود على `main`.
@@ -22,7 +22,10 @@ import { join } from "node:path";
 const ROOT = process.cwd();
 const WORKTREE = join(ROOT, ".gh-pages");
 const BRANCH = "gh-pages";
-const BASE = "/baraem/"; // يطابق اسم المستودع — غيّرهما معاً أو ينكسر كل رابط أصل
+// المسار الفرعي يطابق اسم المستودع، وعنوان الموقع يطابقه بدوره —
+// غيّرها الثلاثة معاً أو ينكسر إمّا كل رابط أصل أو صورة معاينة الرابط.
+const BASE = "/baraem/";
+const SITE = "https://moradsimre1989-creator.github.io/baraem";
 
 function run(cmd, args, opts = {}) {
   return execFileSync(cmd, args, { stdio: "inherit", ...opts });
@@ -45,7 +48,7 @@ console.log(`\n▶ البناء بمسار ${BASE}\n`);
 // npm على ويندوز ملف دفعي، فنستدعي npm.cmd مباشرة بدل تشغيل صدفة — تمرير
 // الوسائط عبر صدفة يفتح باب حقن الأوامر ويطلق تحذير إهمال في Node.
 run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"], {
-  env: { ...process.env, VITE_BASE: BASE },
+  env: { ...process.env, VITE_BASE: BASE, VITE_SITE_URL: SITE },
 });
 
 // 3) تجهيز نسخة عمل لفرع gh-pages

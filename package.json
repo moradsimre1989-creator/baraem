@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "deploy": "node scripts/deploy.mjs",
-    "webp": "node scripts/to-webp.mjs"
+    "webp": "node scripts/to-webp.mjs",
+    "og": "node scripts/make-og.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
