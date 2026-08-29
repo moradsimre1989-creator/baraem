@@ -141,3 +141,29 @@ scripts/to-webp.mjs          ← تحويل صور الوحدة إلى WebP (ي�
 - نشاط «سحب الكلمات» يعمل بالنقر وبلوحة المفاتيح كاملاً؛ السحب بالفأرة تحسين فوقه لا شرط له.
 - زر استماع بالعربية بجانب النصوص والأسئلة (Web Speech API، بلا إنترنت وبلا تكلفة).
 - كل صورة لها وصف بديل عربي من `photoCredits.js`، والصور غير الظاهرة على الشاشة تُحمّل كسولاً.
+
+## الموقع والنشر
+
+الموقع الحيّ: **https://moradsimre1989-creator.github.io/baraem/**
+المستودع: **https://github.com/moradsimre1989-creator/baraem**
+
+- `main` يحمل الكود، و`gh-pages` يحمل **ناتج البناء فقط** وهو ما تخدمه GitHub Pages.
+- لنشر أي تعديل: `npm run deploy` — يبني بالمسار الفرعي `/baraem/` ويدفع الناتج،
+  والموقع يتحدّث خلال دقيقة تقريباً.
+- اسم المستودع `baraem` هو ما يحدّد المسار الفرعي. تغييره يستوجب تغيير `BASE` في
+  `scripts/deploy.mjs` معاً، وإلا انكسر كل رابط أصل في الموقع.
+
+### لتفعيل النشر التلقائي الكامل (بلا `npm run deploy`)
+
+ملف GitHub Actions جاهز في `.github/pages-deploy.workflow.yml` — موضوع **خارج**
+`.github/workflows/` عمداً، لأن توكن `gh` الحالي بلا صلاحية `workflow` فلا يستطيع رفع
+أي ملف داخل ذلك المجلد. مرة واحدة فقط:
+
+```bash
+gh auth refresh -s workflow      # يفتح المتصفح لمنح الصلاحية
+mkdir -p .github/workflows
+cp .github/pages-deploy.workflow.yml .github/workflows/deploy.yml
+git add .github/workflows/deploy.yml && git commit -m "نشر تلقائي" && git push
+```
+
+بعدها كل `git push` إلى `main` يبني الموقع وينشره وحده، ولا حاجة لأي أمر نشر.
