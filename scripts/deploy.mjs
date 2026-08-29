@@ -45,9 +45,10 @@ if (dirty) {
 
 // 2) البناء بالمسار الفرعي
 console.log(`\n▶ البناء بمسار ${BASE}\n`);
-// npm على ويندوز ملف دفعي، فنستدعي npm.cmd مباشرة بدل تشغيل صدفة — تمرير
-// الوسائط عبر صدفة يفتح باب حقن الأوامر ويطلق تحذير إهمال في Node.
-run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"], {
+// نستدعي Vite مباشرة بملفه بدل المرور بـ npm: على ويندوز `npm` ملف ‎.cmd‎ يرفض
+// Node تشغيله إلا عبر صدفة، وتمرير وسائط عبر صدفة يفتح باب حقن الأوامر ويطلق
+// تحذير إهمال. استدعاؤه بـ node يتفادى الاثنين ويعمل على كل نظام تشغيل.
+run(process.execPath, [join(ROOT, "node_modules", "vite", "bin", "vite.js"), "build"], {
   env: { ...process.env, VITE_BASE: BASE, VITE_SITE_URL: SITE },
 });
 
