@@ -17,7 +17,7 @@ import { stat } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-const SRC = join(process.cwd(), "src", "assets", "photos", "olive-branches-sunset.jpg");
+const SRC = join(process.cwd(), "src", "assets", "photos", "olive-tree-full.jpg");
 const OUT = join(process.cwd(), "public", "og-cover.jpg");
 
 const W = 1200;
@@ -28,9 +28,9 @@ const overlay = Buffer.from(`
 <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#0f2318" stop-opacity="0.02" />
-      <stop offset="60%"  stop-color="#0f2318" stop-opacity="0.14" />
-      <stop offset="100%" stop-color="#0f2318" stop-opacity="0.48" />
+      <stop offset="0%"   stop-color="#0f2318" stop-opacity="0.00" />
+      <stop offset="65%"  stop-color="#0f2318" stop-opacity="0.10" />
+      <stop offset="100%" stop-color="#0f2318" stop-opacity="0.40" />
     </linearGradient>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#shade)" />
@@ -39,11 +39,12 @@ const overlay = Buffer.from(`
 
 await sharp(SRC)
   .resize(W, H, { fit: "cover", position: "attention" }) // يقصّ حول أبرز جزء في الصورة
-  // المعاينة تُعرض بحجم صغير جداً في واتساب، والصورة الأصلية ظلّية داكنة —
-  // بلا هذا الرفع تبدو كتلة سوداء لا يُميَّز فيها شيء.
-  .modulate({ brightness: 1.22, saturation: 1.12 })
+  // رفع خفيف للسطوع والتشبّع: المعاينة تُعرض بحجم صغير جداً في واتساب،
+  // والصورة الباهتة تضيع فيها تفاصيل الشجرة.
+  .modulate({ brightness: 1.10, saturation: 1.15 })
   .composite([{ input: overlay, blend: "over" }])
-  .jpeg({ quality: 88, progressive: true })
+  // واتساب يتجاهل صور المعاينة الثقيلة، فنبقى تحت 200 KB
+  .jpeg({ quality: 72, progressive: true, mozjpeg: true })
   .toFile(OUT);
 
 const { size } = await stat(OUT);
