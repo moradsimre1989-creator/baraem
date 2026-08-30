@@ -384,13 +384,13 @@ export const unit = {
         {
           id: "singular-plural-1",
           type: "match",
-          title: "👥 واحد وكثير",
+          title: "👥 مفرد وجمع",
           points: 10,
           skill: "معرفة لغوية",
           stage: "ألعب باللغة",
           verseRef: "غصن، طير، زمن — من القصيدة",
           data: {
-            instruction: "صِل كل كلمة واحدة بصورتها الكثيرة.",
+            instruction: "صِل كل كلمة مفردة بجمعها.",
             pairs: [
               { left: "غصن", right: "أغصان" },
               { left: "طائر", right: "أطيار" },
