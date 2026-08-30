@@ -3,6 +3,7 @@ import { GRADES, useGrade } from "../context/GradeContext.jsx";
 
 const NAV_ITEMS = [
   { key: "home", label: "الرئيسية", icon: "🏠" },
+  { key: "path", label: "مسار الزيتونة", icon: "🛤️" },
   { key: "map", label: "وحدة الزيتونة", icon: "🌿" },
   { key: "challenge", label: "التحديات", icon: "⚡" },
   { key: "achievements", label: "الإنجازات", icon: "🏆" },

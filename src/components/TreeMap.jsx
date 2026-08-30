@@ -1,9 +1,6 @@
 import { useState } from "react";
 import BigButton from "./ui/BigButton.jsx";
-import PathStationCard from "./ui/PathStationCard.jsx";
 import { altFor } from "../data/photoCredits.js";
-import { zaytounaPath, stationActivities } from "../data/units/zaytounaPath.js";
-import { useGrade } from "../context/GradeContext.jsx";
 import oliveBranchesPhoto from "../assets/photos/olive-branches-sunset.webp";
 
 function OliveTreeHero() {
@@ -53,14 +50,18 @@ function BranchCard({ domain, progress, index, onClick }) {
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="absolute inset-0 bg-white/70" />
+          <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-3xl">
+            {domain.icon}
+          </div>
         )}
-        <span
-          className="absolute bottom-2 right-2 w-10 h-10 rounded-xl bg-white/90 flex items-center justify-center text-2xl"
-          aria-hidden
-        >
-          {domain.icon}
-        </span>
+        {domain.photo && (
+          <span
+            className="absolute bottom-2 right-2 w-10 h-10 rounded-xl bg-white/90 flex items-center justify-center text-2xl"
+            aria-hidden
+          >
+            {domain.icon}
+          </span>
+        )}
       </div>
       <div className="font-bold text-base text-olive-ink">{domain.title}</div>
       {domain.comingSoon ? (
@@ -192,9 +193,7 @@ function BadgeShelf({ badges, onOpenDomainById }) {
                   alt=""
                   loading="lazy"
                   decoding="async"
-                  className={`absolute inset-0 h-full w-full object-cover ${
-                    b.earned ? "" : "grayscale"
-                  }`}
+                  className={`absolute inset-0 h-full w-full object-cover ${b.earned ? "" : "grayscale"}`}
                 />
               )}
               <span
@@ -223,23 +222,8 @@ function BadgeShelf({ badges, onOpenDomainById }) {
   );
 }
 
-export default function TreeMap({
-  unit,
-  rawUnit,
-  getDomainProgress,
-  isActivityComplete,
-  badges,
-  onOpenDomain,
-  onOpenPathStation,
-}) {
+export default function TreeMap({ unit, getDomainProgress, badges, onOpenDomain }) {
   const firstDomain = unit.domains[0];
-  // المسار الموضوعي والمواد صارا وجهين لشاشة واحدة بدل بندين منفصلين في القائمة.
-  // «المسار» أولاً لأنه ترتيب الرحلة كما يعيشها الطالب؛ «المواد» للمعلّمة حين
-  // تريد الوصول إلى مادة بعينها.
-  const [view, setView] = useState("path");
-  const { grade } = useGrade();
-  const pathUnit = rawUnit ?? unit;
-
 
   const overall = unit.domains.reduce(
     (acc, d) => {
@@ -302,70 +286,17 @@ export default function TreeMap({
         />
       )}
 
-      {/* مبدّل العرض — المحتوى نفسه بترتيبين */}
-      <div className="flex justify-center mb-6">
-        <div className="inline-flex rounded-2xl bg-surface-alt p-1.5 border border-border">
-          {[
-            { id: "path", icon: "🛤️", label: "المسار", hint: `${zaytounaPath.stations.length} محطة` },
-            { id: "subjects", icon: "📚", label: "المواد", hint: `${unit.domains.length} مادة` },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setView(t.id)}
-              aria-pressed={view === t.id}
-              className={`flex items-center gap-2 rounded-xl px-5 py-3 font-bold transition-all duration-200 ${
-                view === t.id
-                  ? "bg-white text-olive-ink shadow-[0_2px_8px_-2px_rgb(16_24_40/12%)]"
-                  : "text-olive-trunk hover:text-olive-ink"
-              }`}
-            >
-              <span aria-hidden>{t.icon}</span>
-              <span>{t.label}</span>
-              <span className="text-sm font-normal opacity-70">{t.hint}</span>
-            </button>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+        {unit.domains.map((domain, i) => (
+          <BranchCard
+            key={domain.id}
+            domain={domain}
+            index={i}
+            progress={getDomainProgress(domain)}
+            onClick={() => onOpenDomain(domain)}
+          />
+        ))}
       </div>
-
-      {view === "path" ? (
-        <>
-          <p className="text-center text-olive-trunk mb-6 max-w-xl mx-auto">
-            {zaytounaPath.subtitle}
-          </p>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {zaytounaPath.stations.map((station, i) => {
-              const items = stationActivities(pathUnit, station, grade);
-              const done = items.filter((x) => isActivityComplete(x.activity.id)).length;
-              return (
-                <PathStationCard
-                  key={station.id}
-                  cover={station.cover}
-                  icon={station.icon}
-                  title={station.title}
-                  description={station.description}
-                  index={i}
-                  done={done}
-                  total={items.length}
-                  badge={station.badge}
-                  onClick={() => onOpenPathStation?.(station)}
-                />
-              );
-            })}
-          </div>
-        </>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-          {unit.domains.map((domain, i) => (
-            <BranchCard
-              key={domain.id}
-              domain={domain}
-              index={i}
-              progress={getDomainProgress(domain)}
-              onClick={() => onOpenDomain(domain)}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

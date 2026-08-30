@@ -88,16 +88,12 @@ export default function App() {
           mathGrade: nav.mathGrade,
         });
 
-  // المسار صار تبويباً داخل شاشة الوحدة، فالرجوع من محطة مسار يعود إليها
   const goToPath = () =>
-    navigate({
-      screen: "map",
-      subjectId: nav.subjectId ?? defaultSubject.id,
-      unitId: nav.unitId ?? defaultUnit.id,
-    });
+    navigate({ screen: "path", subjectId: nav.subjectId ?? defaultSubject.id, unitId: nav.unitId ?? defaultUnit.id });
 
   const handleShellNav = (key) => {
     if (key === "home") return goToHome();
+    if (key === "path") return navigate({ screen: "path", subjectId: defaultSubject.id, unitId: defaultUnit.id });
     if (key === "map") return navigate({ screen: "map", subjectId: defaultSubject.id, unitId: defaultUnit.id });
     if (key === "challenge")
       return navigate({ screen: "challenge", subjectId: defaultSubject.id, unitId: defaultUnit.id });
@@ -108,11 +104,13 @@ export default function App() {
   const activeShellKey =
     nav.screen === "home"
       ? "home"
-      : nav.screen === "challenge"
-        ? "challenge"
-        : nav.screen === "certificate"
-          ? "achievements"
-          : "map";
+      : nav.screen === "path" || nav.screen === "pathStation"
+        ? "path"
+        : nav.screen === "challenge"
+          ? "challenge"
+          : nav.screen === "certificate"
+            ? "achievements"
+            : "map";
 
   const {
     unit: activeUnit,
@@ -146,7 +144,7 @@ export default function App() {
   } else if (nav.screen === "pathStation" && activeRawUnit && pathStation) {
     const index = zaytounaPath.stations.findIndex((s) => s.id === pathStation.id);
     topBarProps = {
-      backLabel: "وحدة الزيتونة",
+      backLabel: zaytounaPath.title,
       onBack: goToPath,
       totalPoints: progress.totalPoints,
     };
@@ -184,14 +182,9 @@ export default function App() {
     content = (
       <TreeMap
         unit={activeUnit}
-        rawUnit={activeRawUnit}
         getDomainProgress={progress.getDomainProgress}
-        isActivityComplete={progress.isActivityComplete}
         badges={progress.getBadges(activeUnit)}
         onOpenDomain={(domain) => navigate({ ...nav, screen: "station", domainId: domain.id })}
-        onOpenPathStation={(station) =>
-          navigate({ ...nav, screen: "pathStation", pathStationId: station.id })
-        }
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.id === "arabic" && !nav.groupId) {
@@ -378,13 +371,7 @@ export default function App() {
     content = <ExitTicketScreen existing={progress.exitTicket} onSave={progress.saveExitTicket} />;
   } else if (nav.screen === "certificate" && activeUnit) {
     topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
-    content = (
-      <CertificateScreen
-        unit={activeUnit}
-        totalPoints={progress.totalPoints}
-        badges={progress.getBadges(activeUnit)}
-      />
-    );
+    content = <CertificateScreen unit={activeUnit} totalPoints={progress.totalPoints} />;
   } else {
     content = (
       <PlatformHome
