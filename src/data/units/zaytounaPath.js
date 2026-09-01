@@ -320,6 +320,26 @@ export function stationPhases(unit, station, grade) {
   })).filter((g) => g.items.length > 0);
 }
 
+/**
+ * مواد المحطة، كل مادة قسم مستقل بأنشطتها.
+ *
+ * الترتيب هو ترتيب المواد في وحدة الزيتونة نفسها (اللغة العربية، ثم اللغات،
+ * ثم الرياضيات، فموطن فدين…) لا ترتيب ظهورها داخل المحطة — حتى تجد المعلّمة
+ * المواد بالتسلسل نفسه في كل محطة وفي شجرة المواد معاً.
+ *
+ * وداخل المادة تبقى الأنشطة مرتّبة بالمراحل (أكتشف ← أفهم ← أتدرّب…) لأن كل
+ * نشاط يحمل مرحلته معه.
+ */
+export function stationSubjects(unit, station, grade) {
+  const items = stationActivities(unit, station, grade);
+  return unit.domains
+    .map((domain) => ({
+      domain,
+      items: items.filter((i) => i.domain.id === domain.id),
+    }))
+    .filter((group) => group.items.length > 0);
+}
+
 /** كل مراجع المسار — للتحقّق من عدم وجود مرجع مكسور. */
 export function allRefs() {
   return zaytounaPath.stations.flatMap((s) => Object.values(s.steps).flat());

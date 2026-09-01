@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { stationPhases, stationActivities } from "../data/units/zaytounaPath.js";
+import { stationSubjects, stationActivities } from "../data/units/zaytounaPath.js";
 import { useGrade } from "../context/GradeContext.jsx";
 import { playStationComplete } from "../utils/sound.js";
 import CoverImage from "./ui/CoverImage.jsx";
@@ -8,88 +8,44 @@ import ListenButton from "./ui/ListenButton.jsx";
 /*
   محطة واحدة من المسار الموضوعي
   ==============================
-  الأنشطة معروضة بحسب المسار البيداغوجي الثماني: أكتشف ← أستمع وأشاهد ← أفهم ←
-  أتدرّب ← أطبّق ← أتحدّى نفسي ← أقيّم تعلّمي ← أنجزت.
-  المرحلة الفارغة في محطة ما لا تُعرض، فلا يرى الطالب عناوين بلا محتوى.
-  «أنجزت» ليست قائمة أنشطة بل نتيجة المحطة وشارتها.
+  الأنشطة مقسّمة بحسب **المادة**: كل مادة قسم مستقل (اللغة العربية، موطن،
+  دين…) بترتيب المواد في وحدة الزيتونة نفسها، فتجد المعلّمة مادّتها في مكانها
+  المعتاد في كل محطة.
+
+  المرحلة البيداغوجية (أكتشف ← أفهم ← أتدرّب…) لم تُلغَ بل صارت شارة صغيرة على
+  كل نشاط: التسلسل محفوظ داخل المادة، والمعلّمة ترى أين يقع النشاط من الرحلة
+  بلا أن يتقطّع درس مادّتها على ثمانية عناوين.
+
+  «أنجزت» ليست قائمة أنشطة بل نتيجة المحطة وشارتها، وتبقى في آخر الصفحة.
 */
 
-/** يجمع أنشطة المرحلة تحت مادّتها، بترتيب أول ظهور لا بترتيب أبجدي —
- *  فيبقى التسلسل التربوي الذي رُتّبت به المحطة كما هو. */
-function groupByDomain(items) {
-  const groups = [];
-  const byId = new Map();
-  for (const item of items) {
-    let g = byId.get(item.domain.id);
-    if (!g) {
-      g = { domain: item.domain, items: [] };
-      byId.set(item.domain.id, g);
-      groups.push(g);
-    }
-    g.items.push(item);
-  }
-  return groups;
-}
-
-function PhaseSection({ group, isActivityComplete, onOpenActivity }) {
-  const { phase, items } = group;
+/* قسم المادة: عنوان بلون المادة وعدّاد خاص بها، وأنشطتها تحته */
+function SubjectSection({ group, isActivityComplete, onOpenActivity }) {
+  const { domain, items } = group;
   const done = items.filter((i) => isActivityComplete(i.activity.id)).length;
-  const subjects = groupByDomain(items);
 
   return (
     <section className="mb-8">
-      <div className="flex items-center gap-3 mb-1">
-        <span className="text-2xl" aria-hidden>
-          {phase.icon}
-        </span>
-        <h2 className="text-2xl font-black text-olive-ink">{phase.title}</h2>
-        <span className="mr-auto text-sm font-bold text-olive-trunk">
-          {done}/{items.length}
-        </span>
-      </div>
-      <p className="text-olive-trunk mb-4 pr-10">{phase.hint}</p>
-
-      {subjects.map((subject) => (
-        <SubjectGroup
-          key={subject.domain.id}
-          domain={subject.domain}
-          items={subject.items}
-          isActivityComplete={isActivityComplete}
-          onOpenActivity={onOpenActivity}
-        />
-      ))}
-    </section>
-  );
-}
-
-/* المادة داخل المرحلة: عنوان صغير بلون المادة، وخط جانبي يربط أنشطتها بصرياً */
-function SubjectGroup({ domain, items, isActivityComplete, onOpenActivity }) {
-  const done = items.filter((i) => isActivityComplete(i.activity.id)).length;
-
-  return (
-    <div className="mb-5 last:mb-0">
-      <div className="flex items-center gap-2 mb-2 pr-1">
-        <span className="text-lg" aria-hidden>
+      <div
+        className="flex items-center gap-3 mb-3 rounded-2xl px-4 py-3"
+        style={{ background: `${domain.color}14` }}
+      >
+        <span className="text-3xl" aria-hidden>
           {domain.icon}
         </span>
-        <h3 className="font-black" style={{ color: domain.color }}>
+        <h2 className="text-2xl font-black" style={{ color: domain.color }}>
           {domain.title}
-        </h3>
-        <span
-          className="h-px flex-1 rounded"
-          style={{ background: `${domain.color}33` }}
-          aria-hidden
-        />
-        <span className="text-sm font-bold text-olive-trunk shrink-0">
+        </h2>
+        <span className="mr-auto text-sm font-bold text-olive-trunk shrink-0">
           {done}/{items.length}
         </span>
       </div>
 
       <div
-        className="space-y-3 border-r-2 pr-3"
+        className="space-y-3 border-r-4 pr-4"
         style={{ borderColor: `${domain.color}33` }}
       >
-        {items.map(({ activity, domain: itemDomain }) => {
+        {items.map(({ activity, domain: itemDomain, phase }) => {
           const complete = isActivityComplete(activity.id);
           return (
             <button
@@ -102,11 +58,18 @@ function SubjectGroup({ domain, items, isActivityComplete, onOpenActivity }) {
             >
               <span className="min-w-0">
                 <span className="font-bold block leading-snug">{activity.title}</span>
-                {activity.skill && (
-                  <span className="mt-1.5 inline-block text-xs font-bold text-olive-green bg-olive-green/10 rounded-full px-2.5 py-1">
-                    {activity.skill}
+                <span className="mt-1.5 flex flex-wrap items-center gap-2">
+                  {/* المرحلة البيداغوجية للنشاط — تُبقي التسلسل ظاهراً بعد أن
+                      صار التقسيم الأعلى بالمادة */}
+                  <span className="inline-block text-xs font-bold text-olive-trunk bg-surface-alt rounded-full px-2.5 py-1">
+                    {phase.icon} {phase.title}
                   </span>
-                )}
+                  {activity.skill && (
+                    <span className="inline-block text-xs font-bold text-olive-green bg-olive-green/10 rounded-full px-2.5 py-1">
+                      {activity.skill}
+                    </span>
+                  )}
+                </span>
               </span>
               <span className="flex items-center gap-2 shrink-0">
                 <span className="text-sm text-olive-trunk">{activity.points} نقطة</span>
@@ -118,7 +81,7 @@ function SubjectGroup({ domain, items, isActivityComplete, onOpenActivity }) {
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -131,7 +94,7 @@ export default function PathStationScreen({
   nextStation,
 }) {
   const { grade } = useGrade();
-  const groups = stationPhases(unit, station, grade);
+  const groups = stationSubjects(unit, station, grade);
   const items = stationActivities(unit, station, grade);
   const done = items.filter((i) => isActivityComplete(i.activity.id)).length;
   const total = items.length;
@@ -177,8 +140,8 @@ export default function PathStationScreen({
       </div>
 
       {groups.map((group) => (
-        <PhaseSection
-          key={group.phase.id}
+        <SubjectSection
+          key={group.domain.id}
           group={group}
           isActivityComplete={isActivityComplete}
           onOpenActivity={onOpenActivity}
