@@ -127,7 +127,7 @@ export const zaytounaPath = {
       steps: {
         discover: ["homeland/tools-sentence-match", "homeland/harvest-tools-facts"],
         understand: ["homeland/dictation-mcq-2"],
-        practice: ["science/material-sort", "economy/economy-chain-order", "math/measure-1", "math/measure-2"],
+        practice: ["science/material-sort", "math/economy-chain-order", "math/measure-1", "math/measure-2"],
         apply: ["homeland/proverb-open"],
       },
     },
@@ -141,8 +141,8 @@ export const zaytounaPath = {
       steps: {
         discover: ["science/oil-water-predict-mcq"],
         understand: ["science/oil-process-facts", "science/oil-water-explain-facts"],
-        practice: ["economy/raw-product-sort", "math/divide-1", "math/shape-find-1", "math/shape-count-1"],
-        apply: ["economy/shop-math"],
+        practice: ["math/raw-product-sort", "math/divide-1", "math/shape-find-1", "math/shape-count-1"],
+        apply: ["math/shop-math"],
       },
     },
     {
@@ -156,7 +156,7 @@ export const zaytounaPath = {
         discover: ["science/growth-order"],
         understand: ["science/growth-timeline-facts"],
         practice: ["science/oil-process-facts", "math/pattern-visual-1", "math/pattern-number-1", "math/pattern-jump-1"],
-        apply: ["economy/sources-open", "economy/economy-budget-math"],
+        apply: ["math/sources-open", "math/economy-budget-math"],
         challenge: ["math/pattern-number-2"],
       },
     },
@@ -170,8 +170,8 @@ export const zaytounaPath = {
       steps: {
         discover: ["arabic/oil-heals-open"],
         understand: ["science/fact-or-myth-1", "science/fact-or-myth-2"],
-        practice: ["science/fact-or-myth-3", "science/fact-or-myth-4", "economy/need-want-sort", "economy/economy-price-tf"],
-        apply: ["arabic/ahmad-scenario-open", "math/shop-1", "economy/saving-mcq"],
+        practice: ["science/fact-or-myth-3", "science/fact-or-myth-4", "math/need-want-sort", "math/economy-price-tf"],
+        apply: ["arabic/ahmad-scenario-open", "math/shop-1", "math/saving-mcq"],
         challenge: ["math/shop-2"],
       },
     },
