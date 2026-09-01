@@ -1,6 +1,6 @@
 import { useState } from "react";
 import BigButton from "../ui/BigButton.jsx";
-import { speak, startRecording } from "../../utils/speech.js";
+import { speak, stopSpeaking, startRecording } from "../../utils/speech.js";
 import { unit } from "../../data/units/zaytouna.js";
 import { lookupWord } from "../../data/wordGlossary.js";
 
@@ -67,6 +67,22 @@ export default function ReadActivity({ activity, onComplete }) {
     setTimeout(() => setPlayingLine(null), speed === "slow" ? 4000 : 2500);
   };
 
+  /* القصيدة كاملة بصوت واحد متّصل. الوقفة بين البيتين تأتي من نقطة في آخر
+     كل بيت — محرّك النطق يقرأها سكتة، وبدونها تُقرأ الأبيات جملة واحدة
+     مسترسلة فيضيع الوزن. */
+  const playWholePoem = () => {
+    if (playingLine === "all") {
+      stopSpeaking();
+      setPlayingLine(null);
+      return;
+    }
+    setPlayingLine("all");
+    const full = unit.text.lines.map((l) => `${l.sadr}، ${l.ajuz}.`).join(" ");
+    speak(full, "ar-SA", speed === "slow" ? 0.5 : 0.85);
+    const perLine = speed === "slow" ? 4000 : 2500;
+    setTimeout(() => setPlayingLine(null), perLine * unit.text.lines.length);
+  };
+
   const toggleRecord = async (index) => {
     if (recording === index) {
       const url = await recorderRef.stop();
@@ -109,6 +125,39 @@ export default function ReadActivity({ activity, onComplete }) {
         >
           🐢 قراءة بطيئة
         </button>
+      </div>
+
+      {/*
+        القصيدة كاملة في كتلة واحدة قبل البطاقات: الطالب يحتاج أن يرى النصّ
+        مجتمعاً ليحسّ وزنه وقافيته — والبطاقات وحدها تقطّعه إلى ستّ قطع.
+        البطاقات تبقى تحتها للعمل بيتاً بيتاً: تشغيلاً وتسجيلاً واختياراً.
+      */}
+      <div
+        className="rounded-3xl border-2 border-olive-green/25 bg-olive-cream p-5 sm:p-6"
+        style={{ boxShadow: "var(--shadow-card)" }}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <h3 className="font-black text-olive-ink text-xl">
+            📜 {unit.text.title} — القصيدة كاملة
+          </h3>
+          <BigButton
+            variant={playingLine === "all" ? "gold" : "outline"}
+            className="!px-4 !py-2 text-base"
+            onClick={playWholePoem}
+          >
+            {playingLine === "all" ? "⏹ إيقاف" : "🔊 استمع إلى القصيدة كاملة"}
+          </BigButton>
+        </div>
+
+        <div className="space-y-2 text-center">
+          {unit.text.lines.map((line, i) => (
+            <p key={i} className="font-quran text-2xl sm:text-3xl leading-relaxed">
+              <ClickableText text={line.sadr} onWordClick={onWordClick} />
+              <span className="text-olive-green mx-1">،</span>
+              <ClickableText text={line.ajuz} onWordClick={onWordClick} />
+            </p>
+          ))}
+        </div>
       </div>
 
       <div className="space-y-3">
