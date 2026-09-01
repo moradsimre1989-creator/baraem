@@ -110,7 +110,7 @@ export const zaytounaPath = {
       description: "في الخريف تجتمع العائلة تحت الشجرة — هذا هو الموسم.",
       badge: { emoji: "🧺", label: "قاطف ماهر" },
       steps: {
-        watch: ["homeland/olive-season-story", "homeland/olive-videos"],
+        watch: ["homeland/olive-season-story", "arabic/olive-videos"],
         understand: ["homeland/reading-comp-mcq", "homeland/listening-comp-mcq"],
         practice: ["homeland/dictation-mcq-1", "homeland/dictation-mcq-2", "social-emotional/sel-listening-tf", "math/count-1", "math/count-2", "math/add-visual-1", "math/add-word-1", "math/subtract-visual-1", "math/subtract-word-2"],
         apply: ["homeland/write-story-open", "social-emotional/sel-help-open"],
