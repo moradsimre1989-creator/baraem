@@ -88,13 +88,19 @@ function SubjectSection({ group, isActivityComplete, onOpenActivity }) {
 export default function PathStationScreen({
   unit,
   station,
+  filterDomainId,
   isActivityComplete,
   onOpenActivity,
   onNextStation,
   nextStation,
 }) {
   const { grade } = useGrade();
-  const groups = stationSubjects(unit, station, grade);
+  // حين يدخل الطالب من عدسة مادة، تبقى العدسة فاعلة داخل المحطة —
+  // لا معنى لأن يختار «موطن» ثم يجد كل المواد أمامه من جديد.
+  const allGroups = stationSubjects(unit, station, grade);
+  const groups = filterDomainId
+    ? allGroups.filter((g) => g.domain.id === filterDomainId)
+    : allGroups;
   const items = stationActivities(unit, station, grade);
   const done = items.filter((i) => isActivityComplete(i.activity.id)).length;
   const total = items.length;
