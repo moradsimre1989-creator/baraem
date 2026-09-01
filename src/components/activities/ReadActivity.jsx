@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import BigButton from "../ui/BigButton.jsx";
 import { speak, stopSpeaking, startRecording } from "../../utils/speech.js";
 import { unit } from "../../data/units/zaytouna.js";
 import { lookupWord } from "../../data/wordGlossary.js";
+import { asset } from "../../utils/asset.js";
 
 function WordPopup({ word, info, onClose }) {
   return (
@@ -60,6 +61,7 @@ export default function ReadActivity({ activity, onComplete }) {
   const [speed, setSpeed] = useState("normal");
   const [favorite, setFavorite] = useState(null);
   const [activeWord, setActiveWord] = useState(null);
+  const poemAudioRef = useRef(null);
 
   const playLine = (index, sadr, ajuz) => {
     setPlayingLine(index);
@@ -67,20 +69,23 @@ export default function ReadActivity({ activity, onComplete }) {
     setTimeout(() => setPlayingLine(null), speed === "slow" ? 4000 : 2500);
   };
 
-  /* القصيدة كاملة بصوت واحد متّصل. الوقفة بين البيتين تأتي من نقطة في آخر
-     كل بيت — محرّك النطق يقرأها سكتة، وبدونها تُقرأ الأبيات جملة واحدة
-     مسترسلة فيضيع الوزن. */
-  const playWholePoem = () => {
+  /* القصيدة كاملة بصوت جمانة — تسجيل بشري لا نطقاً آلياً. محرّك النطق لا
+     يضبط وزن الشعر ولا مدّ القافية، والطفل في الصف الثاني يتعلّم الإلقاء
+     بالتقليد. التسجيل يبقى مصدر الصوت الوحيد هنا؛ والنطق الآلي باقٍ لقراءة
+     البيت المفرد حيث يخدم التدريب لا الإلقاء. */
+  const toggleWholePoem = () => {
+    const audio = poemAudioRef.current;
+    if (!audio) return;
     if (playingLine === "all") {
-      stopSpeaking();
+      audio.pause();
+      audio.currentTime = 0;
       setPlayingLine(null);
       return;
     }
+    stopSpeaking(); // لا يجتمع صوتان
+    audio.currentTime = 0;
+    audio.play().catch(() => setPlayingLine(null));
     setPlayingLine("all");
-    const full = unit.text.lines.map((l) => `${l.sadr}، ${l.ajuz}.`).join(" ");
-    speak(full, "ar-SA", speed === "slow" ? 0.5 : 0.85);
-    const perLine = speed === "slow" ? 4000 : 2500;
-    setTimeout(() => setPlayingLine(null), perLine * unit.text.lines.length);
   };
 
   const toggleRecord = async (index) => {
@@ -143,10 +148,23 @@ export default function ReadActivity({ activity, onComplete }) {
           <BigButton
             variant={playingLine === "all" ? "gold" : "outline"}
             className="!px-4 !py-2 text-base"
-            onClick={playWholePoem}
+            onClick={toggleWholePoem}
           >
             {playingLine === "all" ? "⏹ إيقاف" : "🔊 استمع إلى القصيدة كاملة"}
           </BigButton>
+          {/* مشغّل ظاهر أيضاً: المعلّمة قد تريد الإرجاع إلى بيت بعينه أو
+              إعادة مقطع، والزرّ وحده لا يتيح ذلك. */}
+          <audio
+            ref={poemAudioRef}
+            src={asset("/audio/zaytouna-poem-jumana.m4a")}
+            controls
+            preload="metadata"
+            onEnded={() => setPlayingLine(null)}
+            onPause={() => setPlayingLine((p) => (p === "all" ? null : p))}
+            onPlay={() => setPlayingLine("all")}
+            className="h-10 w-full sm:w-64"
+            aria-label="القصيدة كاملة بصوت جمانة"
+          />
         </div>
 
         <div className="space-y-2 text-center">
