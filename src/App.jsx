@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import AppShell from "./components/AppShell.jsx";
 import PlatformHome from "./components/PlatformHome.jsx";
-import TreeMap from "./components/TreeMap.jsx";
 import StationScreen from "./components/StationScreen.jsx";
 import ArabicJourneyScreen from "./components/ArabicJourneyScreen.jsx";
 import MathJourneyScreen from "./components/MathJourneyScreen.jsx";
@@ -68,8 +67,6 @@ export default function App() {
   };
 
   const goToHome = () => navigate(HOME_NAV);
-  // «الشجرة» صارت شاشة الوحدة المدموجة — الرجوع من أي محطة يعود إليها
-  const goToMap = () => navigate({ screen: "path", subjectId: nav.subjectId, unitId: nav.unitId });
   // الرجوع من نشاط يعيد الطالب إلى المكان الذي فتحه منه: محطة المسار الموضوعي
   // إن جاء من هناك، وإلا محطة المادة كالسابق.
   const goToStation = () =>
@@ -94,8 +91,7 @@ export default function App() {
 
   const handleShellNav = (key) => {
     if (key === "home") return goToHome();
-    if (key === "path") return navigate({ screen: "path", subjectId: defaultSubject.id, unitId: defaultUnit.id });
-    if (key === "map")
+    if (key === "path" || key === "map")
       return navigate({ screen: "path", subjectId: defaultSubject.id, unitId: defaultUnit.id });
     if (key === "challenge")
       return navigate({ screen: "challenge", subjectId: defaultSubject.id, unitId: defaultUnit.id });
@@ -112,7 +108,7 @@ export default function App() {
           ? "challenge"
           : nav.screen === "certificate"
             ? "achievements"
-            : "map";
+            : "path";
 
   const {
     unit: activeUnit,
@@ -146,7 +142,7 @@ export default function App() {
         unit={activeRawUnit}
         isActivityComplete={progress.isActivityComplete}
         badges={progress.getBadges(activeUnit)}
-        onOpenDomainById={(domainId) => navigate({ ...nav, screen: "station", domainId })}
+        onOpenDomainById={(domainId) => navigate({ ...nav, screen: "path", filterDomainId: domainId })}
         onOpenStation={(station, filterDomainId) =>
           navigate({ ...nav, screen: "pathStation", pathStationId: station.id, filterDomainId })
         }
@@ -155,7 +151,7 @@ export default function App() {
   } else if (nav.screen === "pathStation" && activeRawUnit && pathStation) {
     const index = zaytounaPath.stations.findIndex((s) => s.id === pathStation.id);
     topBarProps = {
-      backLabel: "وحدة الزيتونة",
+      backLabel: "مسار الزيتونة",
       onBack: goToPath,
       totalPoints: progress.totalPoints,
     };
@@ -178,29 +174,8 @@ export default function App() {
         onNextStation={(station) => navigate({ ...nav, pathStationId: station.id })}
       />
     );
-  } else if (nav.screen === "map" && activeUnit) {
-    topBarProps = {
-      backLabel: "الرئيسية",
-      onBack: goToHome,
-      totalPoints: progress.totalPoints,
-      onResetProgress: progress.resetProgress,
-      onOpenPedagogy: () => navigate({ ...nav, screen: "pedagogy" }),
-      onOpenDiscussion: () => navigate({ ...nav, screen: "discussion" }),
-      onOpenTeacherMode: () => navigate({ ...nav, screen: "teacherMode" }),
-      onOpenChallenge: () => navigate({ ...nav, screen: "challenge" }),
-      onOpenExitTicket: () => navigate({ ...nav, screen: "exitTicket" }),
-      onOpenCertificate: () => navigate({ ...nav, screen: "certificate" }),
-    };
-    content = (
-      <TreeMap
-        unit={activeUnit}
-        getDomainProgress={progress.getDomainProgress}
-        badges={progress.getBadges(activeUnit)}
-        onOpenDomain={(domain) => navigate({ ...nav, screen: "station", domainId: domain.id })}
-      />
-    );
   } else if (nav.screen === "station" && activeDomain && activeDomain.id === "arabic" && !nav.groupId) {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <ArabicJourneyScreen
         domain={activeDomain}
@@ -232,7 +207,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.id === "math" && !nav.groupId) {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <MathJourneyScreen
         domain={activeDomain}
@@ -268,7 +243,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.id === "science" && !nav.groupId) {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <ScienceLabScreen
         domain={activeDomain}
@@ -300,7 +275,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.groups && !nav.groupId) {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <GroupJourneyScreen
         domain={activeDomain}
@@ -333,7 +308,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain) {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <StationScreen
         domain={activeDomain}
@@ -367,29 +342,29 @@ export default function App() {
       />
     );
   } else if (nav.screen === "pedagogy") {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <PedagogicalMapScreen />;
   } else if (nav.screen === "discussion") {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <DiscussionScreen />;
   } else if (nav.screen === "teacherMode") {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <TeacherModeScreen />;
   } else if (nav.screen === "challenge") {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <SpeedChallengeScreen />;
   } else if (nav.screen === "exitTicket") {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <ExitTicketScreen existing={progress.exitTicket} onSave={progress.saveExitTicket} />;
   } else if (nav.screen === "certificate" && activeUnit) {
-    topBarProps = { backLabel: "الشجرة", onBack: goToMap, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <CertificateScreen unit={activeUnit} totalPoints={progress.totalPoints} />;
   } else {
     content = (
       <PlatformHome
         unit={defaultUnit}
         progress={progress}
-        onOpenMap={() => navigate({ screen: "map", subjectId: defaultSubject.id, unitId: defaultUnit.id })}
+        onOpenMap={() => navigate({ screen: "path", subjectId: defaultSubject.id, unitId: defaultUnit.id })}
         onOpenActivity={(domain, activity) =>
           navigate({
             screen: "activity",

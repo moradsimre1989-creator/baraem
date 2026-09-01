@@ -6,7 +6,8 @@ import { speak } from "../../utils/speech.js";
 import { altFor } from "../../data/photoCredits.js";
 
 export default function McqActivity({ activity, onComplete }) {
-  const { question, options, answerIndex, level, audioText, audioLang, emojiVisual, image, imageAlt } = activity.data;
+  const { question, options, answerIndex, level, audioText, audioLang, emojiVisual, image, imageAlt, explanation } =
+    activity.data;
   const [selected, setSelected] = useState(null);
   const [status, setStatus] = useState(null);
   const [attempts, setAttempts] = useState(0);
@@ -64,6 +65,15 @@ export default function McqActivity({ activity, onComplete }) {
         ))}
       </div>
       <FeedbackBanner status={status} attempts={attempts} />
+
+      {/* التفسير يظهر بعد الإجابة الصحيحة وحدها: قبلها يكشف الحل، وفي سؤال
+          استنتاجي «لماذا الإجابة صحيحة» هو التعلّم نفسه لا زينة فوقه. */}
+      {status === 'correct' && explanation && (
+        <div className='rounded-2xl border-2 border-olive-green/30 bg-olive-green/5 p-4'>
+          <p className='font-bold text-olive-green mb-1'>💡 لماذا؟</p>
+          <p className='text-olive-ink leading-relaxed'>{explanation}</p>
+        </div>
+      )}
       <div className="flex gap-3">
         <BigButton variant="outline" onClick={check} disabled={selected === null}>
           تحقق من إجابتي
