@@ -76,6 +76,7 @@ export default function App() {
           subjectId: nav.subjectId,
           unitId: nav.unitId,
           pathStationId: nav.pathStationId,
+          filterDomainId: nav.filterDomainId,
         })
       : navigate({
           screen: "station",
@@ -86,13 +87,26 @@ export default function App() {
           mathGrade: nav.mathGrade,
         });
 
+  // العودة إلى شاشة الوحدة تحمل معها المادة المختارة: المعلّمة تفتح «موطن»
+  // ثم تدخل نشاطًا وترجع، فلا يُعقل أن تجد كل المواد أمامها من جديد. المرشّح
+  // يبقى حتى تبدّله هي أو تختار «كل المواد».
   const goToPath = () =>
-    navigate({ screen: "path", subjectId: nav.subjectId ?? defaultSubject.id, unitId: nav.unitId ?? defaultUnit.id });
+    navigate({
+      screen: "path",
+      subjectId: nav.subjectId ?? defaultSubject.id,
+      unitId: nav.unitId ?? defaultUnit.id,
+      filterDomainId: nav.filterDomainId,
+    });
 
   const handleShellNav = (key) => {
     if (key === "home") return goToHome();
     if (key === "path" || key === "map")
-      return navigate({ screen: "path", subjectId: defaultSubject.id, unitId: defaultUnit.id });
+      return navigate({
+        screen: "path",
+        subjectId: defaultSubject.id,
+        unitId: defaultUnit.id,
+        filterDomainId: nav.filterDomainId,
+      });
     if (key === "challenge")
       return navigate({ screen: "challenge", subjectId: defaultSubject.id, unitId: defaultUnit.id });
     if (key === "achievements")
@@ -142,6 +156,10 @@ export default function App() {
         unit={activeRawUnit}
         isActivityComplete={progress.isActivityComplete}
         badges={progress.getBadges(activeUnit)}
+        filterDomainId={nav.filterDomainId ?? null}
+        onChangeFilter={(domainId) =>
+          navigate({ ...nav, screen: "path", filterDomainId: domainId ?? undefined })
+        }
         onOpenDomainById={(domainId) => navigate({ ...nav, screen: "path", filterDomainId: domainId })}
         onOpenStation={(station, filterDomainId) =>
           navigate({ ...nav, screen: "pathStation", pathStationId: station.id, filterDomainId })
@@ -151,7 +169,7 @@ export default function App() {
   } else if (nav.screen === "pathStation" && activeRawUnit && pathStation) {
     const index = zaytounaPath.stations.findIndex((s) => s.id === pathStation.id);
     topBarProps = {
-      backLabel: "مسار الزيتونة",
+      backLabel: "وحدة الزيتونة",
       onBack: goToPath,
       totalPoints: progress.totalPoints,
     };
@@ -175,7 +193,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.id === "arabic" && !nav.groupId) {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <ArabicJourneyScreen
         domain={activeDomain}
@@ -207,7 +225,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.id === "math" && !nav.groupId) {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <MathJourneyScreen
         domain={activeDomain}
@@ -243,7 +261,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.id === "science" && !nav.groupId) {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <ScienceLabScreen
         domain={activeDomain}
@@ -275,7 +293,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain && activeDomain.groups && !nav.groupId) {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <GroupJourneyScreen
         domain={activeDomain}
@@ -308,7 +326,7 @@ export default function App() {
       />
     );
   } else if (nav.screen === "station" && activeDomain) {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = (
       <StationScreen
         domain={activeDomain}
@@ -342,22 +360,22 @@ export default function App() {
       />
     );
   } else if (nav.screen === "pedagogy") {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <PedagogicalMapScreen />;
   } else if (nav.screen === "discussion") {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <DiscussionScreen />;
   } else if (nav.screen === "teacherMode") {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <TeacherModeScreen />;
   } else if (nav.screen === "challenge") {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <SpeedChallengeScreen />;
   } else if (nav.screen === "exitTicket") {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <ExitTicketScreen existing={progress.exitTicket} onSave={progress.saveExitTicket} />;
   } else if (nav.screen === "certificate" && activeUnit) {
-    topBarProps = { backLabel: "المسار", onBack: goToPath, totalPoints: progress.totalPoints };
+    topBarProps = { backLabel: "وحدة الزيتونة", onBack: goToPath, totalPoints: progress.totalPoints };
     content = <CertificateScreen unit={activeUnit} totalPoints={progress.totalPoints} />;
   } else {
     content = (

@@ -53,7 +53,7 @@ export const PHASE_ORDER = PHASES.map((p) => p.id);
  */
 export const zaytounaPath = {
   id: "zaytouna-path",
-  title: "مسار الزيتونة",
+  title: "وحدة الزيتونة",
   subtitle: "رحلة واحدة من التعرّف على الشجرة حتى الاختبار النهائي",
   stations: [
     {

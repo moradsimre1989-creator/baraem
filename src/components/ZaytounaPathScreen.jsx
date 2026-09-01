@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { zaytounaPath, stationActivities } from "../data/units/zaytounaPath.js";
 import { useGrade } from "../context/GradeContext.jsx";
 import PathStationCard from "./ui/PathStationCard.jsx";
@@ -48,10 +47,15 @@ export default function ZaytounaPathScreen({
   onOpenStation,
   badges,
   onOpenDomainById,
+  filterDomainId = null,
+  onChangeFilter,
 }) {
   const { grade, info } = useGrade();
-  // null = كل المواد. التصفية عرض فقط ولا تمسّ التقدّم المحفوظ.
-  const [subjectId, setSubjectId] = useState(null);
+  /* المادة المختارة تعيش في حالة التنقّل لا في حالة المكوّن: الحالة المحلية
+     تُمحى عند مغادرة الشاشة، فيعود المرشّح إلى «كل المواد» كلما رجع المستخدم
+     من نشاط. في التنقّل تبقى، ويحفظها زرّ الرجوع في المتصفّح أيضاً. */
+  const subjectId = filterDomainId;
+  const setSubjectId = (id) => onChangeFilter?.(id);
 
   const allItems = zaytounaPath.stations.flatMap((s) => stationActivities(unit, s, grade));
 
@@ -154,7 +158,7 @@ export default function ZaytounaPathScreen({
       >
         <div className="flex items-center justify-between mb-2">
           <span className="font-bold text-olive-ink">
-            {activeSubject ? `تقدّمك في ${activeSubject.title}` : "تقدّمك في المسار"}
+            {activeSubject ? `تقدّمك في ${activeSubject.title}` : "تقدّمك في الوحدة"}
           </span>
           <span className="font-black text-olive-green">{overall}%</span>
         </div>

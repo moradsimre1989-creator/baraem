@@ -45,7 +45,7 @@ export default function PedagogicalMapScreen() {
       </Section>
 
       <div className="grid sm:grid-cols-2 gap-5">
-        <Section title="طرائق التعلّم" icon="🧭">
+        <Section title="طرق التعلّم" icon="🧭">
           <ul className="list-disc pr-5 space-y-1.5 text-sm text-olive-trunk">
             {m.learningMethods.map((x, i) => (
               <li key={i}>{x}</li>
