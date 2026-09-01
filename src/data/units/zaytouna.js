@@ -1816,6 +1816,43 @@ export const unit = {
           },
         },
         {
+          id: "olive-videos",
+          type: "video",
+          title: "🎬 فيديو عن الزيتون",
+          points: 10,
+          skill: "مشاهدة واستماع",
+          stage: "أستمع وأشاهد",
+          verseRef: "الوحدة كاملة",
+          teacherNote: {
+            goal: "مشاهدة الزيتون في سياق حيّ: الشجرة، والقطاف، والتراث.",
+            duration: "10 دقائق",
+            groupMode: "جماعي",
+            skill: "مشاهدة واستماع",
+          },
+          data: {
+            instruction: "شاهد الفيديوهات، ثم تحدّث مع رفاقك: ما الذي رأيته عن الزيتون؟",
+            videos: [
+              {
+                src: "/video/olive-character.mp4",
+                title: "🫒 حبّة الزيتون تتكلّم",
+                description: "شخصية زيتونة على غصن الشجرة — انتبه إلى شكل الورقة والغصن.",
+                aspect: "portrait",
+              },
+              {
+                src: "/video/olive-harvest-girl.mp4",
+                title: "🧺 في موسم القطاف",
+                description: "طفلة بالثوب المطرّز تجمع الزيتون في البستان.",
+                aspect: "landscape",
+              },
+              {
+                youtubeId: "OnOcG3jZ2RY",
+                title: "🌳 فيديو عن شجرة الزيتون",
+                description: "فيديو إضافي عن الزيتون من يوتيوب.",
+              },
+            ],
+          },
+        },
+        {
           id: "olive-season-story",
           type: "story",
           title: "🫒 موسم قطف الزيتون",
