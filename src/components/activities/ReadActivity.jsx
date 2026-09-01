@@ -4,6 +4,7 @@ import { speak, stopSpeaking, startRecording } from "../../utils/speech.js";
 import { unit } from "../../data/units/zaytouna.js";
 import { lookupWord } from "../../data/wordGlossary.js";
 import { asset } from "../../utils/asset.js";
+import ReadingRobot from "../ReadingRobot.jsx";
 
 function WordPopup({ word, info, onClose }) {
   return (
@@ -177,6 +178,12 @@ export default function ReadActivity({ activity, onComplete }) {
           ))}
         </div>
       </div>
+
+      <ReadingRobot
+        lines={unit.text.lines}
+        teacherAudioSrc={asset("/audio/zaytouna-poem-jumana.m4a")}
+        referenceSeconds={30.7}
+      />
 
       <div className="space-y-3">
         {unit.text.lines.map((line, i) => (
