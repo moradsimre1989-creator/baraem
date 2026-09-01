@@ -1,11 +1,41 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import BigButton from "../ui/BigButton.jsx";
+import ListenButton from "../ui/ListenButton.jsx";
+import { playCorrect, playWrong } from "../../utils/sound.js";
+import oliveTreeFullPhoto from "../../assets/photos/olive-tree-full.webp";
+
+/*
+  الخريطة الذهنية
+  ================
+  الطالب يبني أشعّة حول السؤال في المركز. حين تعطي البيانات حقل `distractors`
+  يصير النشاط تمييزاً لا جمعاً: بنك الكلمات يخلط الصحيح بالبعيد عن الموضوع،
+  والطالب يختار ما يخصّ الزيتونة وحده. الكلمة الخاطئة لا تُضاف شعاعاً، ويبقى
+  زرّها ظاهراً ليعيد المحاولة — لا نحذفه ولا نكشف الصواب.
+
+  الخلط يجري مرة واحدة (useMemo) وإلا قفزت الأزرار مع كل ضغطة.
+*/
+
+/** خلط ثابت مبني على النصّ نفسه، فلا يتغيّر الترتيب بين عمليات الرسم */
+function shuffleStable(words) {
+  return [...words]
+    .map((w) => [w, [...w].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 9973, 7)])
+    .sort((a, b) => a[1] - b[1])
+    .map(([w]) => w);
+}
 
 export default function MindmapActivity({ activity, onComplete }) {
-  const { wordBank } = activity.data;
+  const { wordBank, distractors } = activity.data;
   const [rays, setRays] = useState([]);
   const [draft, setDraft] = useState("");
   const [usedWords, setUsedWords] = useState([]);
+  const [wrongWord, setWrongWord] = useState(null);
+  const [wrongCount, setWrongCount] = useState(0);
+
+  const correctSet = useMemo(() => new Set(wordBank ?? []), [wordBank]);
+  const shownWords = useMemo(
+    () => (wordBank ? shuffleStable([...wordBank, ...(distractors ?? [])]) : []),
+    [wordBank, distractors]
+  );
 
   const addRay = () => {
     if (!draft.trim()) return;
@@ -13,10 +43,18 @@ export default function MindmapActivity({ activity, onComplete }) {
     setDraft("");
   };
 
-  const addWordFromBank = (word) => {
+  const pickWord = (word) => {
     if (usedWords.includes(word)) return;
+    if (!correctSet.has(word)) {
+      setWrongWord(word);
+      setWrongCount((c) => c + 1);
+      playWrong();
+      return;
+    }
+    setWrongWord(null);
     setRays((r) => [...r, word]);
     setUsedWords((w) => [...w, word]);
+    playCorrect();
   };
 
   return (
@@ -24,8 +62,20 @@ export default function MindmapActivity({ activity, onComplete }) {
       <div className="flex flex-col items-center gap-4">
         <div className="relative w-56 h-56">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-olive-gold text-white rounded-full w-32 h-32 flex items-center justify-center text-center font-bold text-lg p-2 shadow-lg z-10">
-              {activity.data.prompt}
+            {/* مركز الخريطة صورة شجرة زيتون حقيقية لا قرصاً ذهبياً: القرص كان
+                يُقرأ كشمس بأشعّة، والموضوع شجرة. التعتيم فوق الصورة يبقي
+                السؤال مقروءاً مهما كانت فاتحة. */}
+            <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-lg z-10 ring-4 ring-olive-gold">
+              <img
+                src={oliveTreeFullPhoto}
+                alt="شجرة زيتون معمّرة"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/45" />
+              <p className="absolute inset-0 flex items-center justify-center p-2 text-center font-bold text-lg text-white [text-shadow:0_1px_6px_rgb(0_0_0/80%)]">
+                {activity.data.prompt}
+              </p>
             </div>
           </div>
           {rays.map((ray, i) => {
@@ -51,21 +101,44 @@ export default function MindmapActivity({ activity, onComplete }) {
       </div>
 
       {wordBank ? (
-        <div className="flex flex-wrap justify-center gap-2">
-          {wordBank.map((word) => (
-            <button
-              key={word}
-              onClick={() => addWordFromBank(word)}
-              disabled={usedWords.includes(word)}
-              className={`rounded-full px-4 py-2 font-bold border-2 transition-all duration-200 ${
-                usedWords.includes(word)
-                  ? "bg-olive-green/10 border-olive-green/20 text-olive-trunk/50"
-                  : "bg-white border-olive-green text-olive-green hover:bg-olive-green hover:text-white"
-              }`}
-            >
-              {word} 🌿
-            </button>
-          ))}
+        <div className="space-y-3">
+          {distractors && (
+            <div className="flex items-center justify-center gap-2 text-center">
+              <p className="font-bold text-olive-ink">
+                اختر الكلمات التي لها علاقة بالزيتونة فقط
+              </p>
+              <ListenButton text="اختر الكلمات التي لها علاقة بالزيتونة فقط" />
+            </div>
+          )}
+          <div className="flex flex-wrap justify-center gap-2">
+            {shownWords.map((word) => {
+              const used = usedWords.includes(word);
+              const isWrong = wrongWord === word;
+              return (
+                <button
+                  key={word}
+                  onClick={() => pickWord(word)}
+                  disabled={used}
+                  aria-label={word}
+                  className={`rounded-full px-4 py-2 font-bold border-2 transition-all duration-200 ${
+                    used
+                      ? "bg-olive-green/10 border-olive-green/20 text-olive-trunk/50"
+                      : isWrong
+                        ? "bg-rose-50 border-rose-400 text-rose-700 animate-[shake_0.3s_ease-in-out]"
+                        : "bg-white border-olive-green text-olive-green hover:bg-olive-green hover:text-white"
+                  }`}
+                >
+                  {word} {used ? "✓" : "🌿"}
+                </button>
+              );
+            })}
+          </div>
+          {wrongWord && (
+            <p className="text-center font-bold text-rose-700">
+              «{wrongWord}» لا علاقة لها بالزيتونة — جرّب كلمة أخرى.
+              {wrongCount >= 3 && " فكّر: ماذا نأخذ من الشجرة؟ وما لونها؟"}
+            </p>
+          )}
         </div>
       ) : (
         <div className="flex gap-3">

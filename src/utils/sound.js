@@ -58,6 +58,21 @@ export function playCorrect() {
   }
 }
 
+/**
+ * محاولة غير صحيحة: نغمة واحدة هابطة وخفيفة.
+ * هادئة عمداً وأخفض من نغمة الصواب — الغرض إشعار لا توبيخ، والطالب يعيد
+ * المحاولة فوراً.
+ */
+export function playWrong() {
+  if (reducedMotion()) return;
+  try {
+    tone(392, 0, 0.12, 0.05); // صول
+    tone(311, 0.1, 0.18, 0.05); // مي بيمول
+  } catch {
+    // الصوت غير متاح — نتجاهل بصمت
+  }
+}
+
 /** إكمال محطة: ثلاث نغمات صاعدة أطول قليلاً. */
 export function playStationComplete() {
   if (reducedMotion()) return;
