@@ -215,7 +215,7 @@ export const zaytounaPath = {
       badge: { emoji: "🎧", label: "المستمع اليقظ" },
       steps: {
         watch: ["arabic/listen-word-1", "arabic/listen-word-2", "arabic/listen-word-3"],
-        understand: ["arabic/comp-gives-1", "arabic/comp-shade-1", "arabic/comp-symbol-1", "arabic/verse-count-mcq", "arabic/sadr-term-mcq", "arabic/grammar-tf-1", "arabic/grammar-tf-2", "arabic/grammar-tf-3", "arabic/grammar-tf-4", "arabic/comp-infer-branches", "arabic/comp-infer-poet-feeling", "arabic/comp-infer-title", "arabic/comp-infer-order"],
+        understand: ["arabic/comp-gives-1", "arabic/comp-shade-1", "arabic/comp-symbol-1", "arabic/verse-count-mcq", "arabic/sadr-term-mcq", "arabic/grammar-tf-1", "arabic/grammar-tf-2", "arabic/grammar-tf-3", "arabic/grammar-tf-4", "arabic/comp-infer-branches", "arabic/comp-infer-poet-feeling", "arabic/comp-infer-title", "arabic/comp-infer-order", "arabic/comp-vocab-context", "arabic/comp-cause-effect", "arabic/comp-not-said", "arabic/comp-tf-personify", "arabic/comp-tf-notall"],
         practice: ["arabic/truefalse-1", "arabic/truefalse-2", "arabic/truefalse-3", "arabic/truefalse-4", "arabic/write-sadr-2-open", "arabic/write-ajuz-last-open", "arabic/sun-moon-write-open"],
         apply: ["math/poem-math-bridge"],
         challenge: ["arabic/verse-meaning-mcq", "arabic/qafiya-mcq", "arabic/comp-infer-compare"],
