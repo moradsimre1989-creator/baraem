@@ -13,9 +13,12 @@
   المشكول بغير المشكول تجعل كل كلمة خاطئة. أما العرض فيبقى بالنصّ المشكول
   الأصلي كما هو مكتوب في القصيدة.
 
-  ⚠️ حدّ معروف: التشكيل لا يُفحص. محرّك المتصفّح لا يعيد الحركات ولا الصوتيات،
-  فلا سبيل إلى كشف «خطأ في حركة» أو «خطأ في نطق حرف» بهذه الأدوات. ما يُكشف
-  هو مستوى الكلمة: صحيحة، مستبدَلة، محذوفة، مضافة، مكرّرة.
+  ما يُكشف من الكلام: مستوى الكلمة — صحيحة، مستبدَلة، محذوفة، مضافة، مكرّرة —
+  زائدَ إبدال الحروف المتشابهة (ظ/ز، ض/د، ث/س…) وهو أشيع أخطاء النطق.
+
+  ⚠️ حدّ باقٍ: الحركات لا تُسمع. محرّك المتصفّح يعيد نصّاً بلا تشكيل، فقراءة
+  «زَيْتونةُ» و«زَيْتونةَ» سواء عنده. لذلك تُدرَّب الحركة بالاختيار لا بالسماع
+  (buildHarakatDrills في آخر الملف) — وهو فحص يقينيّ بخلاف تخمين الصوت.
 */
 
 /** حروف التشكيل العربية */
@@ -45,14 +48,47 @@ export function toWords(text) {
     .filter((w) => normalizeWord(w).length > 0);
 }
 
+/*
+  حروف يخلط بينها القارئ المبتدئ فعلاً: مخارجها متقاربة، ورسمها أحياناً متشابه.
+  مسافة ليفنشتاين تعدّ إبدال «الظليل ← الزليل» خطأً واحداً في كلمة من ستّة
+  أحرف، فيخرج التشابه 0.83 — فوق عتبة القبول — فيمرّ الخطأ. وهو ليس خطأً
+  عابراً بل بيت القصيد في تدريب النطق.
+
+  لذلك يُعامَل الاختلاف في هذه الأزواج وحدها معاملةً خاصة: لا يُحسب مطابقةً
+  مهما ارتفع التشابه، ويُسمّى للطالب باسمه: «قلت ز بدل ظ».
+*/
+const CONFUSABLE = [
+  ["ظ", "ز"], ["ظ", "ذ"], ["ذ", "ز"], ["ذ", "د"],
+  ["ض", "د"], ["ض", "ظ"], ["ص", "س"], ["ث", "س"], ["ث", "ت"],
+  ["ط", "ت"], ["ق", "ك"], ["ح", "ه"], ["ع", "ا"], ["غ", "خ"], ["ش", "س"],
+];
+
+function confusablePair(x, y) {
+  return CONFUSABLE.some(([p, q]) => (x === p && y === q) || (x === q && y === p));
+}
+
 /**
- * تشابه حرفي بين كلمتين (0..1) بمسافة ليفنشتاين.
- * يميّز «قرأها خطأً قريباً» عن «قرأ كلمة أخرى تماماً»، وهذا فرق تربوي:
- * الأولى تحتاج تدريباً على مقطع، والثانية تحتاج انتباهاً إلى السطر.
+ * يكشف إبدال حرف متشابه بين كلمتين متساويتي الطول.
+ * يُعيد { expected, heard } لأول إبدال، أو null إن لم يكن الفرق من هذا النوع.
+ * الشرط أن يكون الاختلاف في موضع أو موضعين فقط وكلّها من الأزواج المتشابهة —
+ * وإلا فهي كلمة أخرى لا خطأ نطق.
  */
+export function letterConfusion(expected, heard) {
+  if (!expected || !heard || expected.length !== heard.length) return null;
+  const diffs = [];
+  for (let i = 0; i < expected.length; i++) {
+    if (expected[i] !== heard[i]) diffs.push([expected[i], heard[i]]);
+  }
+  if (diffs.length === 0 || diffs.length > 2) return null;
+  if (!diffs.every(([x, y]) => confusablePair(x, y))) return null;
+  return { expected: diffs[0][0], heard: diffs[0][1], count: diffs.length };
+}
+
 export function similarity(a, b) {
   if (a === b) return 1;
   if (!a.length || !b.length) return 0;
+  // إبدال حرف متشابه لا يُقبل مهما قارب الشكل — هذا خطأ نطق لا تقريب
+  if (letterConfusion(a, b)) return 0.5;
   const m = a.length;
   const n = b.length;
   let prev = Array.from({ length: n + 1 }, (_, j) => j);
@@ -167,6 +203,8 @@ export function analyzeReading(expected, transcript, opts = {}) {
       status: op ? op.type : "del",
       heard: op?.heard ?? null,
       similarity: op?.similarity ?? 0,
+      // إبدال حرف متشابه، إن كان هذا سبب الخطأ — ليُسمّى للطالب باسمه
+      confusion: op?.heard ? letterConfusion(w.norm, op.heard) : null,
     };
   });
 
@@ -251,4 +289,58 @@ export function splitSyllables(word) {
 /** هل يدعم هذا المتصفّح التعرّف على الكلام؟ */
 export function speechRecognitionSupported() {
   return typeof window !== "undefined" && Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+/*
+  تدريب الحركات
+  ==============
+  محرّك التعرّف على الكلام لا يعيد حركات، فلا سبيل إلى سماع «زَيْتونةُ» وتمييزها
+  من «زَيْتونةَ». لكن الحركة تُفحص بيقين تامّ حين يختارها الطالب بدل أن ينطقها:
+  نعرض الكلمة وقد رُفعت حركة حرف واحد، ويختار الطالب الحركة الصحيحة.
+
+  هذا ليس التفافاً على النقص بل تدريب مختلف: الأول يدرّب النطق، وهذا يدرّب
+  معرفة الحركة وقراءتها — وهي مهارة سابقة للنطق الصحيح لا بديلة عنه.
+*/
+
+/** الحركات التي ندرّب عليها، وأسماؤها كما ينطقها المعلّم */
+export const HARAKAT = [
+  { mark: "\u064E", name: "فَتحة" },
+  { mark: "\u064F", name: "ضَمّة" },
+  { mark: "\u0650", name: "كَسرة" },
+  { mark: "\u0652", name: "سُكون" },
+];
+
+/**
+ * يولّد أسئلة حركات من أبيات القصيدة.
+ * لكل سؤال: الكلمة كاملة، وموضع الحرف، والحركة الصحيحة، والكلمة وقد أُزيلت
+ * منها تلك الحركة وحدها — فيرى الطالب باقي التشكيل ويركّز على موضع واحد.
+ */
+export function buildHarakatDrills(lines, limit = 6) {
+  const marks = new Set(HARAKAT.map((h) => h.mark));
+  const out = [];
+
+  for (const line of lines) {
+    for (const part of [line.sadr, line.ajuz]) {
+      for (const word of String(part).split(/\s+/)) {
+        const chars = [...word];
+        // مواضع الحركات داخل الكلمة (الحركة تتبع حرفها)
+        const spots = chars
+          .map((c, i) => (marks.has(c) && i > 0 && /[ء-ي]/.test(chars[i - 1]) ? i : -1))
+          .filter((i) => i > 0);
+        if (spots.length === 0) continue;
+
+        // نختار موضعاً واحداً ثابتاً لكل كلمة (الأوسط) فلا يتغيّر السؤال عند كل رسم
+        const at = spots[Math.floor(spots.length / 2)];
+        const blanked = chars.filter((_, i) => i !== at).join("");
+        out.push({
+          word,
+          blanked,
+          letter: chars[at - 1],
+          answer: chars[at],
+          answerName: HARAKAT.find((h) => h.mark === chars[at])?.name ?? "",
+        });
+      }
+    }
+  }
+  return out.slice(0, limit);
 }

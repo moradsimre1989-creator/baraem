@@ -9,6 +9,8 @@ import {
   splitSyllables,
   similarity,
   speechRecognitionSupported,
+  buildHarakatDrills,
+  HARAKAT,
 } from "../utils/readingCheck.js";
 
 /*
@@ -21,8 +23,10 @@ import {
   - التعرّف على الكلام يجري في المتصفّح عبر Web Speech API. في كروم يُرسَل
     الصوت إلى خوادم غوغل للتحويل — وهذا يُخبَر به المستخدم صراحةً في البطاقة
     قبل أول تسجيل، لأنه صوت طفل.
-  - المحرّك يعيد نصاً بلا تشكيل ولا صوتيات، فلا يمكن كشف «خطأ حركة» أو «خطأ
-    نطق حرف». المكشوف هو مستوى الكلمة: صحيحة، مستبدَلة، محذوفة، مضافة، مكرّرة.
+  - المكشوف من الكلام: مستوى الكلمة (صحيحة، مستبدَلة، محذوفة، مضافة، مكرّرة)
+    زائدَ إبدال الحروف المتشابهة (ظ/ز، ض/د، ث/س…) وهو أشيع أخطاء النطق.
+  - الحركات لا تُسمع: المحرّك يعيد نصاً بلا تشكيل، فـ«زَيْتونةُ» و«زَيْتونةَ»
+    سواء عنده. لذلك تُدرَّب بالاختيار في HarakatDrill — فحص يقينيّ لا تخمين صوت.
   - لا توقيت لكل كلمة من المحرّك، فتظليل الكلمة أثناء القراءة يسير بإيقاع
     تسجيل المعلّمة (مرشد بصري) لا بتتبّع صوت الطالب لحظةً بلحظة.
   - نطق الكلمة المفردة يأتي من النطق الآلي: استخراج كلمة بعينها من تسجيل
@@ -132,6 +136,17 @@ function WordDrill({ item, onDone }) {
         </span>
       </div>
 
+      {/* الخطأ يُسمّى باسمه: «قلت ز بدل ظ» أوضح للطفل من «الكلمة خاطئة» */}
+      {item.confusion && (
+        <div className="mb-3 rounded-xl bg-amber-50 border-2 border-olive-gold/40 p-3">
+          <p className="font-bold text-olive-ink">
+            انتبه إلى الحرف: الصواب{" "}
+            <span className="font-quran text-2xl text-olive-green">{item.confusion.expected}</span>{" "}
+            وقد سمعتُ{" "}
+            <span className="font-quran text-2xl text-red-600">{item.confusion.heard}</span>
+          </p>
+        </div>
+      )}
       <div className="rounded-xl bg-olive-cream p-3 mb-3 text-center">
         <p className="text-sm text-olive-trunk mb-1">اقرأها مقطعًا مقطعًا:</p>
         <p className="font-quran text-2xl font-bold text-olive-green">{syllables.join(" – ")}</p>
@@ -167,6 +182,113 @@ function WordDrill({ item, onDone }) {
       )}
       {result === "error" && (
         <p className="mt-3 text-olive-trunk">تعذّر السماع. اقترب من الميكروفون وحاول ثانية.</p>
+      )}
+    </div>
+  );
+}
+
+/*
+  تدريب الحركات
+  ==============
+  الحركة لا تُسمع: محرّك المتصفّح يعيد نصّاً بلا تشكيل، فقراءة «زَيْتونةُ»
+  و«زَيْتونةَ» سواء عنده. فتُدرَّب بالاختيار لا بالسماع — وهذا فحص يقينيّ لا
+  تخمين صوت. الطالب يرى الكلمة وقد رُفعت حركة حرف واحد، ويختار الصحيحة.
+*/
+function HarakatDrill({ lines }) {
+  const drills = useMemo(() => buildHarakatDrills(lines, 6), [lines]);
+  const [i, setI] = useState(0);
+  const [picked, setPicked] = useState(null);
+  const [score, setScore] = useState(0);
+
+  if (drills.length === 0) return null;
+  const d = drills[i];
+  const done = i >= drills.length;
+
+  const pick = (mark) => {
+    if (picked) return;
+    setPicked(mark);
+    if (mark === d.answer) {
+      setScore((s) => s + 1);
+      playCorrect();
+    } else playWrong();
+  };
+
+  const next = () => {
+    setPicked(null);
+    setI((n) => n + 1);
+  };
+
+  if (done) {
+    return (
+      <div className="rounded-2xl border-2 border-olive-green/30 bg-olive-green/5 p-5 text-center">
+        <p className="text-xl font-black text-olive-green">
+          🎯 أنهيت تدريب الحركات: {score} من {drills.length}
+        </p>
+        <BigButton
+          variant="outline"
+          className="!px-4 !py-2 text-base mt-3"
+          onClick={() => {
+            setI(0);
+            setScore(0);
+            setPicked(null);
+          }}
+        >
+          🔄 أعد التدريب
+        </BigButton>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border-2 border-brand/30 bg-white p-5">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-xl font-black text-olive-ink">حَرَكات — أيّ حركة فوق الحرف؟</h4>
+        <span className="text-sm font-bold text-olive-trunk">
+          {i + 1}/{drills.length}
+        </span>
+      </div>
+
+      <p className="text-center font-quran text-4xl mb-1">{d.blanked}</p>
+      <p className="text-center text-olive-trunk mb-4">
+        ما الحركة الصحيحة فوق الحرف{" "}
+        <span className="font-quran text-2xl text-olive-green">{d.letter}</span>؟
+      </p>
+
+      <div className="flex flex-wrap justify-center gap-2">
+        {HARAKAT.map((h) => {
+          const isAnswer = h.mark === d.answer;
+          const chosen = picked === h.mark;
+          return (
+            <button
+              key={h.name}
+              onClick={() => pick(h.mark)}
+              disabled={Boolean(picked)}
+              className={`rounded-2xl border-2 px-5 py-3 font-bold transition-colors ${
+                picked && isAnswer
+                  ? "bg-olive-green text-white border-olive-green"
+                  : chosen
+                    ? "bg-red-50 border-red-400 text-red-700"
+                    : "bg-white border-border hover:border-olive-green"
+              }`}
+            >
+              <span className="font-quran text-2xl">{d.letter + h.mark}</span>
+              <span className="block text-sm mt-0.5">{h.name}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {picked && (
+        <div className="mt-4 text-center">
+          <p className={`font-bold ${picked === d.answer ? "text-olive-green" : "text-olive-gold"}`}>
+            {picked === d.answer
+              ? `أحسنت! الكلمة: ${d.word}`
+              : `الصواب: ${d.answerName} — الكلمة: ${d.word}`}
+          </p>
+          <BigButton variant="primary" className="!px-4 !py-2 text-base mt-2" onClick={next}>
+            التالي ←
+          </BigButton>
+        </div>
       )}
     </div>
   );
@@ -546,6 +668,8 @@ export default function ReadingRobot({ lines, teacherAudioSrc, referenceSeconds 
               ))}
             </div>
           )}
+          <HarakatDrill lines={lines} />
+
           {report.practiceWords.length > 0 && drills.length === 0 && (
             <p className="rounded-2xl bg-olive-green/10 p-4 text-center text-xl font-black text-olive-green">
               🌟 ممتاز! أتقنت كل الكلمات التي تدرّبت عليها.
