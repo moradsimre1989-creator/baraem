@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import BigButton from "./ui/BigButton.jsx";
 import { speak, stopSpeaking, startRecording } from "../utils/speech.js";
 import { playCorrect, playWrong } from "../utils/sound.js";
+import { segmentForWord } from "../data/poemAudioMap.js";
 import {
   toWords,
   normalizeWord,
@@ -81,7 +82,7 @@ function RobotFace({ state, speaking }) {
 }
 
 /** بطاقة تصحيح كلمة واحدة: نطق صحيح، مقاطع، تسجيل، ونتيجة فورية */
-function WordDrill({ item, onDone }) {
+function WordDrill({ item, onDone, teacherAudioSrc }) {
   const [heard, setHeard] = useState(null);
   const [result, setResult] = useState(null);
   const [listening, setListening] = useState(false);
@@ -89,6 +90,26 @@ function WordDrill({ item, onDone }) {
 
   const syllables = useMemo(() => splitSyllables(item.word), [item.word]);
   const target = normalizeWord(item.word);
+  const seg = useMemo(() => segmentForWord(item.word), [item.word]);
+  const segAudio = useRef(null);
+
+  /* التصحيح بصوت المعلّمة: نشغّل الشطر الذي وردت فيه الكلمة من تسجيلها،
+     ونوقفه عند نهايته بالضبط. النطق الآلي يبقى بديلاً حين لا نعرف الشطر —
+     ولا يُخفى ذلك عن الطالب، فالزرّان مختلفا التسمية. */
+  const playTeacherSegment = () => {
+    const a = segAudio.current;
+    if (!a || !seg) return;
+    stopSpeaking();
+    a.currentTime = seg.start;
+    a.play().catch(() => {});
+    const stopAt = () => {
+      if (a.currentTime >= seg.end) {
+        a.pause();
+        a.removeEventListener("timeupdate", stopAt);
+      }
+    };
+    a.addEventListener("timeupdate", stopAt);
+  };
 
   const tryAgain = () => {
     if (!speechRecognitionSupported()) return;
@@ -152,13 +173,20 @@ function WordDrill({ item, onDone }) {
         <p className="font-quran text-2xl font-bold text-olive-green">{syllables.join(" – ")}</p>
       </div>
 
+      <audio ref={segAudio} src={teacherAudioSrc} preload="metadata" className="hidden" />
+
       <div className="flex flex-wrap gap-2">
+        {seg && (
+          <BigButton variant="gold" className="!px-4 !py-2 text-base" onClick={playTeacherSegment}>
+            👩‍🏫 استمع إلى المعلّمة: «{seg.text}»
+          </BigButton>
+        )}
         <BigButton
           variant="outline"
           className="!px-4 !py-2 text-base"
           onClick={() => speak(item.word, "ar-SA", 0.55)}
         >
-          🔊 استمع إلى النطق الصحيح
+          🔊 الكلمة وحدها (نطق آلي)
         </BigButton>
         {speechRecognitionSupported() && (
           <BigButton
@@ -663,6 +691,7 @@ export default function ReadingRobot({ lines, teacherAudioSrc, referenceSeconds 
                 <WordDrill
                   key={w.word + w.lineIndex}
                   item={w}
+                  teacherAudioSrc={teacherAudioSrc}
                   onDone={(word) => setMastered((m) => [...m, word])}
                 />
               ))}
