@@ -176,18 +176,20 @@ function WordDrill({ item, onDone, teacherAudioSrc }) {
       <audio ref={segAudio} src={teacherAudioSrc} preload="metadata" className="hidden" />
 
       <div className="flex flex-wrap gap-2">
-        {seg && (
+        {seg ? (
           <BigButton variant="gold" className="!px-4 !py-2 text-base" onClick={playTeacherSegment}>
             👩‍🏫 استمع إلى المعلّمة: «{seg.text}»
           </BigButton>
+        ) : (
+          // لا شطر لهذه الكلمة في التسجيل — البديل الآلي وحده، مسمّى بصراحة
+          <BigButton
+            variant="outline"
+            className="!px-4 !py-2 text-base"
+            onClick={() => speak(item.word, "ar-SA", 0.55)}
+          >
+            🔊 الكلمة (نطق آلي — لا يوجد تسجيل لها)
+          </BigButton>
         )}
-        <BigButton
-          variant="outline"
-          className="!px-4 !py-2 text-base"
-          onClick={() => speak(item.word, "ar-SA", 0.55)}
-        >
-          🔊 الكلمة وحدها (نطق آلي)
-        </BigButton>
         {speechRecognitionSupported() && (
           <BigButton
             variant={listening ? "gold" : "primary"}
