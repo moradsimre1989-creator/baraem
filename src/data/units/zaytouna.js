@@ -1974,6 +1974,31 @@ export const unit = {
       ],
       activities: [
         {
+          id: "homeland-video",
+          type: "video",
+          title: "🎬 فيديو: الزيتون في وطننا",
+          points: 10,
+          skill: "مشاهدة واستماع",
+          stage: "أستمع وأشاهد",
+          verseRef: "الزيتونة في تراثنا",
+          teacherNote: {
+            goal: "مشاهدة الزيتون في سياق الوطن والتراث.",
+            duration: "10 دقائق",
+            groupMode: "جماعي",
+            skill: "مشاهدة واستماع",
+          },
+          data: {
+            instruction: "شاهد الفيديو، ثم تحدّث مع رفاقك: ماذا عرفت عن الزيتون في وطننا؟",
+            videos: [
+              {
+                youtubeId: "0ifm2Grs8n4",
+                title: "🌳 الزيتون في وطننا",
+                description: "فيديو عن الزيتون وأرضنا.",
+              },
+            ],
+          },
+        },
+        {
           id: "compass-mcq",
           type: "mcq",
           title: "الجهات الأربع",

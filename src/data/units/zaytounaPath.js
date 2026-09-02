@@ -185,7 +185,7 @@ export const zaytounaPath = {
       badge: { emoji: "🕊️", label: "سفير السلام" },
       steps: {
         discover: ["religion/peace-symbol-mcq", "religion/religion-blessed-tf", "homeland/region-mcq"],
-        watch: ["religion/quran-surah-tin-recitation"],
+        watch: ["religion/quran-surah-tin-recitation", "homeland/homeland-video"],
         understand: ["homeland/levant-facts", "homeland/africa-facts", "homeland/compass-mcq", "homeland/map-key-mcq", "homeland/map-lines-mcq"],
         practice: ["homeland/homeland-countries-sort", "religion/values-tree-match", "homeland/family-sort", "social-emotional/cooperation-open"],
         apply: ["social-emotional/proverb-meaning-mcq", "religion/religion-peace-blank", "social-emotional/feelings-mcq", "social-emotional/feel-sentence-open", "social-emotional/disagree-mcq", "social-emotional/peace-words-mindmap"],
