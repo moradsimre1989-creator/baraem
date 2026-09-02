@@ -92,6 +92,7 @@ function WordDrill({ item, onDone, teacherAudioSrc }) {
   const target = normalizeWord(item.word);
   const seg = useMemo(() => segmentForWord(item.word), [item.word]);
   const segAudio = useRef(null);
+  const [segPlaying, setSegPlaying] = useState(false);
 
   /* التصحيح بصوت المعلّمة: نشغّل الشطر الذي وردت فيه الكلمة من تسجيلها،
      ونوقفه عند نهايته بالضبط. النطق الآلي يبقى بديلاً حين لا نعرف الشطر —
@@ -99,12 +100,19 @@ function WordDrill({ item, onDone, teacherAudioSrc }) {
   const playTeacherSegment = () => {
     const a = segAudio.current;
     if (!a || !seg) return;
+    if (segPlaying) {
+      a.pause();
+      setSegPlaying(false);
+      return;
+    }
     stopSpeaking();
+    setSegPlaying(true);
     a.currentTime = seg.start;
     a.play().catch(() => {});
     const stopAt = () => {
       if (a.currentTime >= seg.end) {
         a.pause();
+        setSegPlaying(false);
         a.removeEventListener("timeupdate", stopAt);
       }
     };
@@ -173,12 +181,22 @@ function WordDrill({ item, onDone, teacherAudioSrc }) {
         <p className="font-quran text-2xl font-bold text-olive-green">{syllables.join(" – ")}</p>
       </div>
 
-      <audio ref={segAudio} src={teacherAudioSrc} preload="metadata" className="hidden" />
+      <audio
+        ref={segAudio}
+        src={teacherAudioSrc}
+        preload="metadata"
+        onPause={() => setSegPlaying(false)}
+        className="hidden"
+      />
 
       <div className="flex flex-wrap gap-2">
         {seg ? (
-          <BigButton variant="gold" className="!px-4 !py-2 text-base" onClick={playTeacherSegment}>
-            👩‍🏫 استمع إلى المعلّمة: «{seg.text}»
+          <BigButton
+            variant={segPlaying ? "primary" : "gold"}
+            className="!px-4 !py-2 text-base"
+            onClick={playTeacherSegment}
+          >
+            {segPlaying ? "⏹ إيقاف" : `👩‍🏫 استمع إلى المعلّمة: «${seg.text}»`}
           </BigButton>
         ) : (
           // لا شطر لهذه الكلمة في التسجيل — البديل الآلي وحده، مسمّى بصراحة
@@ -333,6 +351,7 @@ export default function ReadingRobot({ lines, teacherAudioSrc, referenceSeconds 
   const [myAudio, setMyAudio] = useState(null);
   const [mastered, setMastered] = useState([]);
   const [robotVoice, setRobotVoice] = useState(true);
+  const [teacherPlaying, setTeacherPlaying] = useState(false);
 
   const recorderRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -373,12 +392,21 @@ export default function ReadingRobot({ lines, teacherAudioSrc, referenceSeconds 
     if (robotVoice) speak(text, "ar-SA", 0.8);
   };
 
+  /* تشغيل/إيقاف لا تشغيل فقط: التسجيل ثلاثون ثانية، والطفل قد يريد قطعه
+     ليقرأ. وزرّ بلا إيقاف يجبره على انتظار انتهائه أو مغادرة الصفحة. */
   const playTeacher = () => {
-    stopSpeaking();
     const a = teacherRef.current;
     if (!a) return;
+    if (teacherPlaying) {
+      a.pause();
+      a.currentTime = 0;
+      setTeacherPlaying(false);
+      return;
+    }
+    stopSpeaking();
     a.currentTime = 0;
-    a.play().catch(() => {});
+    a.play().catch(() => setTeacherPlaying(false));
+    setTeacherPlaying(true);
   };
 
   /* التظليل مرشد بصري بإيقاع تسجيل المعلّمة: محرّك التعرّف لا يعطي توقيت كل
@@ -554,13 +582,24 @@ export default function ReadingRobot({ lines, teacherAudioSrc, referenceSeconds 
         تحسين قراءتك!
       </p>
 
-      <audio ref={teacherRef} src={teacherAudioSrc} preload="metadata" className="hidden" />
+      <audio
+        ref={teacherRef}
+        src={teacherAudioSrc}
+        preload="metadata"
+        onEnded={() => setTeacherPlaying(false)}
+        onPause={() => setTeacherPlaying(false)}
+        className="hidden"
+      />
 
       {/* أثناء التسجيل لا يُعرض زرّ صوت المعلّمة: صوتان معًا يفسدان التحليل */}
       <div className="mt-4 flex flex-wrap gap-3">
         {!recording && (
-          <BigButton variant="outline" className="!px-4 !py-2 text-base" onClick={playTeacher}>
-            👩‍🏫 استمع إلى المعلمة
+          <BigButton
+            variant={teacherPlaying ? "gold" : "outline"}
+            className="!px-4 !py-2 text-base"
+            onClick={playTeacher}
+          >
+            {teacherPlaying ? "⏹ إيقاف صوت المعلمة" : "👩‍🏫 استمع إلى المعلمة"}
           </BigButton>
         )}
         {!recording && state !== "countdown" && (
