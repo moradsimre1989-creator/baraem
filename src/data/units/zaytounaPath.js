@@ -169,10 +169,11 @@ export const zaytounaPath = {
       badge: { emoji: "💚", label: "حارس الصحة" },
       steps: {
         discover: ["arabic/oil-heals-open"],
-        understand: ["science/fact-or-myth-1", "science/fact-or-myth-2"],
+        watch: ["science/benefits-facts"],
+        understand: ["science/fact-or-myth-1", "science/fact-or-myth-2", "science/benefits-open-3"],
         practice: ["science/fact-or-myth-3", "science/fact-or-myth-4", "math/need-want-sort", "math/economy-price-tf"],
-        apply: ["arabic/ahmad-scenario-open", "math/shop-1", "math/saving-mcq"],
-        challenge: ["math/shop-2"],
+        apply: ["arabic/ahmad-scenario-open", "science/benefits-open-1", "math/shop-1", "math/saving-mcq"],
+        challenge: ["math/shop-2", "science/benefits-open-2"],
       },
     },
     {
