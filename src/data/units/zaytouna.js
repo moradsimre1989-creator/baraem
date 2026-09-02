@@ -1386,10 +1386,12 @@ export const unit = {
         { id: "m11", title: "تحدي بستان الزيتونة", icon: "🏆", description: "التحدي النهائي — 8 مهام متنوّعة.", activities: ["math-challenge-1", "math-challenge-2", "math-challenge-3", "math-challenge-4", "math-challenge-5", "math-challenge-6", "math-challenge-7", "math-challenge-8"] },
         { id: "m12", title: "اقتصاد البستان", icon: "💰", description: "من الشجرة إلى السوق: مادة خام، ومنتَج، وثمن.", activities: ["need-want-sort", "raw-product-sort", "economy-chain-order", "sources-open"] },
         { id: "m13", title: "أوفّر وأحسب", icon: "🧾", description: "الثمن والميزانية والتوفير — حساب من الحياة.", activities: ["shop-math", "saving-mcq", "economy-price-tf", "economy-budget-math"] },
+        { id: "m14", title: "أفكّر كرياضيّ", icon: "🧠", description: "مسائل لا تُحلّ بعملية واحدة: خطوتان، واختيار العملية، وتقدير، وعكس.", activities: ["math-two-step", "math-choose-op", "math-choose-op-2", "math-extra-info", "math-estimate", "math-reverse", "math-compare-methods"] },
       ],
       activities: [
         {
           id: "count-1",
+          grade: 2,
           type: "mcq",
           title: "🫒 عدّ الزيتون",
           points: 5,
@@ -1407,6 +1409,7 @@ export const unit = {
         },
         {
           id: "number-line-1",
+          grade: 2,
           type: "mcq",
           title: "🚂 قطار الأعداد",
           points: 5,
@@ -1454,6 +1457,7 @@ export const unit = {
         },
         {
           id: "add-visual-1",
+          grade: 2,
           type: "mcq",
           title: "➕ نجمع ثمار الزيتون",
           points: 5,
@@ -1486,6 +1490,7 @@ export const unit = {
         },
         {
           id: "subtract-visual-1",
+          grade: 2,
           type: "mcq",
           title: "➖ طارت الأطيار",
           points: 5,
@@ -1518,6 +1523,7 @@ export const unit = {
         },
         {
           id: "pattern-visual-1",
+          grade: 2,
           type: "mcq",
           title: "🔁 نمط الزيتون",
           points: 5,
@@ -1526,6 +1532,7 @@ export const unit = {
         },
         {
           id: "pattern-number-1",
+          grade: 2,
           type: "mcq",
           title: "🔁 نمط الأعداد",
           points: 5,
@@ -1627,6 +1634,119 @@ export const unit = {
           points: 10,
           grade: 3,
           data: { question: "ساعد سلمى — ما الجواب الصحيح؟ 26 + 13 = ؟", options: ["39", "49", "38"], answerIndex: 0 , explanation: "اجمع الآحاد: 6 + 3 = 9، ثم العشرات: 20 + 10 = 30، فالمجموع 39." },
+        },
+        {
+          id: "math-two-step",
+          grade: 3,
+          type: "math",
+          title: "🧮 مسألة من خطوتين",
+          points: 15,
+          skill: "حلّ مشكلات",
+          data: {
+            image: olivePickingPhoto,
+            question:
+              "قطفنا 3 سلال، في كل سلة 8 حبات زيتون. ثم أكلنا 5 حبات. كم حبة بقيت؟",
+            answer: 19,
+            unitLabel: "حبة",
+          },
+        },
+        {
+          id: "math-choose-op",
+          grade: 3,
+          type: "mcq",
+          title: "🤔 أيّ عملية نستعمل؟",
+          points: 10,
+          skill: "حلّ مشكلات",
+          data: {
+            question:
+              "«في البستان 24 شجرة، وفي بستان الجار 18 شجرة. كم شجرة في البستانين معًا؟» — أيّ عملية تحلّ هذه المسألة؟",
+            options: ["➕ الجمع", "➖ الطرح", "✖️ الضرب", "➗ القسمة"],
+            answerIndex: 0,
+            explanation:
+              "كلمة «معًا» تدلّ على ضمّ المجموعتين، والضمّ جمع. لو سُئل «كم تزيد الأولى؟» لكان طرحًا.",
+          },
+        },
+        {
+          id: "math-choose-op-2",
+          grade: 3,
+          type: "mcq",
+          title: "🤔 أيّ عملية نستعمل؟ (2)",
+          points: 10,
+          skill: "حلّ مشكلات",
+          data: {
+            question:
+              "«عندنا 30 حبة زيتون نوزّعها بالتساوي على 5 أطفال. كم يأخذ كل طفل؟» — أيّ عملية تحلّها؟",
+            options: ["➗ القسمة", "✖️ الضرب", "➕ الجمع", "➖ الطرح"],
+            answerIndex: 0,
+            explanation:
+              "«بالتساوي على» تعني تفريق الكمّية إلى أنصبة متساوية — وهذه هي القسمة.",
+          },
+        },
+        {
+          id: "math-extra-info",
+          grade: 3,
+          type: "math",
+          title: "🔍 انتبه: معلومة زائدة",
+          points: 15,
+          skill: "حلّ مشكلات",
+          data: {
+            image: oliveOrchardWidePhoto,
+            question:
+              "في البستان 12 شجرة زيتون و7 أشجار تين. قطفنا من 5 من أشجار الزيتون. كم شجرة زيتون لم نقطف منها؟ (انتبه: ليست كل الأرقام لازمة!)",
+            answer: 7,
+            unitLabel: "شجرة",
+          },
+        },
+        {
+          id: "math-estimate",
+          grade: 3,
+          type: "mcq",
+          title: "📏 قدّر قبل أن تحسب",
+          points: 10,
+          skill: "حسّ عددي",
+          data: {
+            question:
+              "في كل سلة نحو 20 حبة زيتون، وعندنا 4 سلال. قبل أن تحسب بدقّة: أيّ تقدير أقرب إلى العدد الكلّي؟",
+            options: ["حوالي 80 حبة", "حوالي 24 حبة", "حوالي 400 حبة", "حوالي 8 حبات"],
+            answerIndex: 0,
+            explanation:
+              "التقدير: 20 في كل سلة × 4 سلال ≈ 80. والتقدير يكشف الخطأ الكبير قبل الحساب الدقيق.",
+          },
+        },
+        {
+          id: "math-reverse",
+          grade: 3,
+          type: "math",
+          title: "🔄 مسألة عكسية",
+          points: 15,
+          skill: "تفكير واستنتاج",
+          data: {
+            question:
+              "وزّعت الأمّ الزيتون بالتساوي على 4 صحون، فصار في كل صحن 6 حبات. كم حبة كانت معها في البداية؟",
+            answer: 24,
+            unitLabel: "حبة",
+          },
+        },
+        {
+          id: "math-compare-methods",
+          grade: 3,
+          type: "mcq",
+          title: "⚖️ أيّ الطريقتين صحيحة؟",
+          points: 15,
+          skill: "تفكير واستنتاج",
+          data: {
+            question:
+              "لحساب 5 سلال في كل سلة 6 حبات: قالت مريم «5 + 6 = 11»، وقال زيد «6 + 6 + 6 + 6 + 6 = 30». من على حق؟",
+            options: [
+              "زيد — لأنه جمع السلال الخمس كلها",
+              "مريم — لأن الجمع أسهل",
+              "كلاهما على حق",
+              "لا أحد منهما",
+            ],
+            answerIndex: 0,
+            explanation:
+              "خمس سلال في كل واحدة ستّ حبات تعني ستّة مكرّرة خمس مرات = 30، وهو الضرب 5×6. أما 5+6 فيجمع أشياء مختلفة: عدد السلال إلى عدد الحبات.",
+          },
         },
         {
           id: "poem-math-bridge",

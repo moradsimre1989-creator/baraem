@@ -114,7 +114,7 @@ export const zaytounaPath = {
         understand: ["homeland/reading-comp-mcq", "homeland/listening-comp-mcq"],
         practice: ["homeland/dictation-mcq-1", "homeland/dictation-mcq-2", "social-emotional/sel-listening-tf", "math/count-1", "math/count-2", "math/add-visual-1", "math/add-word-1", "math/subtract-visual-1", "math/subtract-word-2"],
         apply: ["homeland/write-story-open", "social-emotional/sel-help-open"],
-        challenge: ["math/subtract-word-1", "math/add-word-2", "math/subtract-unknown", "math/add-mult-intro"],
+        challenge: ["math/subtract-word-1", "math/add-word-2", "math/subtract-unknown", "math/add-mult-intro", "math/math-two-step", "math/math-extra-info"],
       },
     },
     {
@@ -157,7 +157,7 @@ export const zaytounaPath = {
         understand: ["science/growth-timeline-facts"],
         practice: ["science/oil-process-facts", "math/pattern-visual-1", "math/pattern-number-1", "math/pattern-jump-1"],
         apply: ["math/sources-open", "math/economy-budget-math"],
-        challenge: ["math/pattern-number-2"],
+        challenge: ["math/pattern-number-2", "math/math-estimate", "math/math-reverse"],
       },
     },
     {
@@ -247,7 +247,7 @@ export const zaytounaPath = {
       steps: {
         discover: ["sports/sports-safety-tf"],
         understand: ["arts/arts-leaf-two-colors-tf", "arts/arts-shape-mcq"],
-        practice: ["sports/sports-warmup-order", "sports/tree-growth-game-outdoor", "sports/balance-outdoor", "sports/shadow-catch-outdoor", "arabic/word-hunt-1", "math/number-line-1", "math/build-number-1", "math/compare-1"],
+        practice: ["sports/sports-warmup-order", "sports/tree-growth-game-outdoor", "sports/balance-outdoor", "sports/shadow-catch-outdoor", "arabic/word-hunt-1", "math/number-line-1", "math/build-number-1", "math/compare-1", "math/math-choose-op", "math/math-choose-op-2", "math/math-compare-methods"],
         apply: ["arts/draw-tree", "arts/palette-mcq", "arts/arts-describe-open", "arts/arts-warm-cool-sort"],
         challenge: ["science/shadow-sim-1", "science/shadow-mcq", "sports/beautiful-shadow-outdoor", "math/number-line-2", "math/build-number-2", "math/detective-1", "math/detective-1-fix", "math/detective-2", "math/detective-2-fix", "math/math-talk-1"],
       },
