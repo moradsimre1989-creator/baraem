@@ -34,8 +34,18 @@ export default function WordBuildActivity({ activity, onComplete }) {
     <div className="space-y-5">
       <p className="text-olive-trunk">{hint}</p>
 
-      <div className="min-h-16 flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-olive-green/40 p-3 text-3xl font-bold">
-        {current.length === 0 ? <span className="text-olive-trunk/40 text-lg">اضغط الحروف لتكوين كلمة</span> : current.join(" ")}
+      {/*
+        الكلمة تُعرض موصولة الحروف: join("") لا join(" "). المسافة بين المقطعين
+        تقطع الوصل في العربية فتظهر «زي تو نة» بحروف منفصلة، والطفل يتعلّم شكل
+        الكلمة كما تُكتب لا كما تقطّعها الأزرار. التحقّق كان يستعمل النصّ الموصول
+        أصلاً، فالعطل كان في العرض وحده.
+      */}
+      <div className="min-h-16 flex items-center justify-center rounded-2xl border-2 border-dashed border-olive-green/40 p-3 text-4xl font-bold">
+        {current.length === 0 ? (
+          <span className="text-olive-trunk/40 text-lg">اضغط الحروف لتكوين كلمة</span>
+        ) : (
+          <span className="font-quran">{current.join("")}</span>
+        )}
       </div>
 
       <div className="flex flex-wrap justify-center gap-2">

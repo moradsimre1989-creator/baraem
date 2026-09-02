@@ -1,9 +1,10 @@
 import { useState } from "react";
 import BigButton from "../ui/BigButton.jsx";
 import FeedbackBanner from "../ui/FeedbackBanner.jsx";
+import { altFor } from "../../data/photoCredits.js";
 
 export default function MathActivity({ activity, onComplete }) {
-  const { question, answer, unitLabel } = activity.data;
+  const { question, answer, unitLabel, image, imageAlt } = activity.data;
   const [value, setValue] = useState("");
   const [status, setStatus] = useState(null);
 
@@ -14,6 +15,17 @@ export default function MathActivity({ activity, onComplete }) {
 
   return (
     <div className="space-y-5">
+      {/* صورة حقيقية للمسألة: المسألة الكلامية المجرّدة تُتعب قارئاً مبتدئاً،
+          والصورة تربط العدد بشيء يراه. اختيارية — من لا صورة له لا يتغيّر. */}
+      {image && (
+        <img
+          src={image}
+          alt={imageAlt ?? altFor(image)}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-48 object-cover rounded-2xl"
+        />
+      )}
       <p className="text-xl font-bold leading-relaxed">{question}</p>
       <div className="flex items-center gap-3">
         <input

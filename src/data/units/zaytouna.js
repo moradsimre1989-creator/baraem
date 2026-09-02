@@ -244,10 +244,11 @@ export const unit = {
           data: {
             instruction: "صِل كل كلمة بالصورة التي تناسبها.",
             pairs: [
-              { left: "الأطيار", right: "طائر", rightImage: birdOnBranchPhoto },
-              { left: "الأغصان", right: "أغصان", rightImage: olivesCloseupPhoto },
-              { left: "البستان", right: "بستان", rightImage: oliveBranchesPhoto },
-              { left: "الزيت", right: "زيت", rightImage: oliveOilBottlePhoto },
+              { left: "الأطيار", right: "طائر على غصن", rightImage: birdOnBranchPhoto },
+              { left: "الأغصان", right: "غصن زيتون بأوراقه", rightImage: oliveLeavesPhoto },
+              { left: "الزَّيْتون", right: "ثمار الزيتون", rightImage: olivePickingPhoto },
+              { left: "الزَّيت", right: "زيت الزيتون", rightImage: oliveOilBottlePhoto },
+              { left: "الشَّجَرة", right: "شجرة زيتون", rightImage: oliveTreeFullPhoto },
             ],
           },
         },
@@ -623,7 +624,7 @@ export const unit = {
           skill: "معرفة لغوية",
           stage: "ألعب باللغة",
           verseRef: "زَيْتونةُ البُستانِ",
-          data: { question: "أكمل الكلمة: زيتوـة", options: ["ن", "م", "ر"], answerIndex: 0 },
+          data: { question: "أكمل الكلمة: زيتو __ ة", options: ["ن", "م", "ر"], answerIndex: 0 },
         },
         {
           id: "missing-letter-2",
@@ -633,7 +634,7 @@ export const unit = {
           skill: "معرفة لغوية",
           stage: "ألعب باللغة",
           verseRef: "مُلتَفّةُ الأغصانِ",
-          data: { question: "أكمل الكلمة: الأغصاـ", options: ["ن", "م", "ر"], answerIndex: 0 },
+          data: { question: "أكمل الكلمة: الأغصا __", options: ["ن", "م", "ر"], answerIndex: 0 },
         },
         {
           id: "missing-letter-3",
@@ -643,7 +644,7 @@ export const unit = {
           skill: "معرفة لغوية",
           stage: "ألعب باللغة",
           verseRef: "وَفوقُها الأطيارُ",
-          data: { question: "أكمل الكلمة: الأطياـ", options: ["ر", "ن", "ت"], answerIndex: 0 },
+          data: { question: "أكمل الكلمة: الأطيا __", options: ["ر", "ن", "ت"], answerIndex: 0 },
         },
         {
           id: "singular-plural-1",
@@ -849,7 +850,7 @@ export const unit = {
           skill: "تحدي",
           stage: "أتحدى نفسي",
           verseRef: "زَيْتونةُ البُستانِ",
-          data: { question: "أكمل الكلمة: البستاـ", options: ["ن", "م", "ر"], answerIndex: 0 },
+          data: { question: "أكمل الكلمة: البستا __", options: ["ن", "م", "ر"], answerIndex: 0 },
         },
         {
           id: "challenge-6",
@@ -1673,21 +1674,21 @@ export const unit = {
           type: "math",
           title: "🏆 تحدي البستان 2/8",
           points: 10,
-          data: { question: "قطفنا 9 حبات زيتون، ثم قطفنا 6 حبات أخرى. كم المجموع؟", answer: 15, unitLabel: "حبة" },
+          data: { image: olivePickingPhoto, question: "قطفنا 9 حبات زيتون، ثم قطفنا 6 حبات أخرى. كم المجموع؟", answer: 15, unitLabel: "حبة" },
         },
         {
           id: "math-challenge-3",
           type: "math",
           title: "🏆 تحدي البستان 3/8",
           points: 10,
-          data: { question: "كان معنا 20 حبة زيتون، أكلنا 6. كم بقي؟", answer: 14, unitLabel: "حبة" },
+          data: { image: olivesInWaterPhoto, question: "كان معنا 20 حبة زيتون، أكلنا 6. كم بقي؟", answer: 14, unitLabel: "حبة" },
         },
         {
           id: "math-challenge-4",
           type: "mcq",
           title: "🏆 تحدي البستان 4/8",
           points: 10,
-          data: { question: "في السلة الأولى 11 حبة، وفي الثانية 17 حبة. أي سلة فيها أكثر؟", options: ["الأولى", "الثانية", "متساويتان"], answerIndex: 1 },
+          data: { image: olivesCloseupPhoto, question: "في السلة الأولى 11 حبة، وفي الثانية 17 حبة. أي سلة فيها أكثر؟", options: ["الأولى", "الثانية", "متساويتان"], answerIndex: 1 },
         },
         {
           id: "math-challenge-5",
@@ -1708,14 +1709,14 @@ export const unit = {
           type: "mcq",
           title: "🏆 تحدي البستان 7/8",
           points: 10,
-          data: { question: "الغصن الأول أطول من الثاني، والثاني أطول من الثالث. أيّ الأغصان الأقصر؟", options: ["الأول", "الثاني", "الثالث"], answerIndex: 2 , explanation: "إذا كان الأول أطول من الثاني، والثاني أطول من الثالث، فالأول أطول من الجميع." },
+          data: { image: oliveBranchesPhoto, question: "الغصن الأول أطول من الثاني، والثاني أطول من الثالث. أيّ الأغصان الأقصر؟", options: ["الأول", "الثاني", "الثالث"], answerIndex: 2 , explanation: "إذا كان الأول أطول من الثاني، والثاني أطول من الثالث، فالأول أطول من الجميع." },
         },
         {
           id: "math-challenge-8",
           type: "math",
           title: "🏆 تحدي البستان 8/8",
           points: 10,
-          data: { question: "معك 12 عملة. اشتريت غصن زينة بـ3 عملات. كم عملة بقيت؟", answer: 9, unitLabel: "عملة" },
+          data: { image: oliveOilBottlePhoto, question: "معك 12 عملة. اشتريت غصن زينة بـ3 عملات. كم عملة بقيت؟", answer: 9, unitLabel: "عملة" },
         },
         {
           id: "need-want-sort",
@@ -2018,7 +2019,7 @@ export const unit = {
           title: "✏️ إملاء: الشقشاشة",
           points: 5,
           skill: "إملاء",
-          data: { question: "أكمل الكلمة إملائيًا: الشق‌ـاشة", options: ["ش", "س", "ت"], answerIndex: 0 },
+          data: { question: "أكمل الكلمة إملائيًا: الشق __ اشة", options: ["ش", "س", "ت"], answerIndex: 0 },
         },
         {
           id: "dictation-mcq-2",
@@ -2026,7 +2027,7 @@ export const unit = {
           title: "✏️ إملاء: الشادر",
           points: 5,
           skill: "إملاء",
-          data: { question: "أكمل الكلمة إملائيًا: الشا‌ـر", options: ["ذ", "د", "ز"], answerIndex: 1 },
+          data: { question: "أكمل الكلمة إملائيًا: الشا __ ر", options: ["ذ", "د", "ز"], answerIndex: 1 },
         },
         {
           id: "tools-sentence-match",
